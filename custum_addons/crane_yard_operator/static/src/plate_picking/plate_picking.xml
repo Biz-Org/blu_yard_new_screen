@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="crane_yard_operator.Plate">
+        <div role="button" tabindex="0"
+             t-att-class="plateClass(plateId)"
+             t-att-title="plateTooltip(plateId)"
+             t-on-click="() => this.selectPlate(plateId)">
+            <div class="o_cy_plate_main">
+                <span class="o_cy_plate_id" t-esc="plateId"/>
+                <span class="o_cy_plate_ids">
+                    <span class="o_cy_plate_sr" t-esc="state.plates[plateId].srNumber"/>
+                    <span class="o_cy_plate_so" t-esc="state.plates[plateId].soNumber"/>
+                </span>
+            </div>
+            <t t-set="status" t-value="plateStatus(plateId)"/>
+            <span t-if="status === 'done'" class="o_cy_plate_tag"><i class="fa fa-check"/> DONE</span>
+            <button t-elif="status === 'pick' and isDropScreen" type="button"
+                    class="o_cy_plate_conveyor_btn"
+                    t-att-disabled="state.busy or plateId !== nextPickId"
+                    t-att-title="plateId === nextPickId ? 'Drop ' + plateId + ' to Conveyor' : 'Plates on top must be picked first'"
+                    t-on-click.stop="() => this.pickPlate(plateId)">
+                <i class="fa fa-ellipsis-h"/>
+            </button>
+            <span t-elif="status === 'pick'" class="o_cy_plate_tag">PICK</span>
+            <span t-elif="status === 'relocate'" class="o_cy_plate_tag o_cy_plate_tag--move"><i class="fa fa-long-arrow-right"/> B</span>
+            <span t-elif="status === 'relocated'" class="o_cy_plate_tag o_cy_plate_tag--muted">from A</span>
+            <span t-else="" class="o_cy_plate_meta"><t t-esc="state.plates[plateId].thickness"/> mm</span>
+        </div>
+    </t>
+
+    <t t-name="crane_yard_operator.PlatePicking">
+        <div class="o_action o_cy h-100">
+            <div class="o_cy_layout">
+            <CraneYardNav active="navKey" disabled="state.busy"/>
+            <div class="o_cy_content">
+            <div class="o_cy_page">
+
+                <header class="o_cy_header">
+                    <div>
+                        <div class="o_cy_breadcrumb">Yard <span class="mx-1">/</span> <span class="o_cy_breadcrumb_active">Crane Operator</span></div>
+                        <h1 class="o_cy_title" t-esc="screenTitle"/>
+                    </div>
+                    <div class="o_cy_route">
+                        <div class="o_cy_route_chip">
+                            <i class="fa fa-th-list"/>
+                            <div>
+                                <div class="o_cy_route_label">Stack A</div>
+                                <div class="o_cy_route_value" t-esc="isRestoreScreen ? 'Original Stack' : 'Source'"/>
+                            </div>
+                        </div>
+                        <i class="fa fa-long-arrow-right o_cy_route_arrow"/>
+                        <div t-if="isMoveScreen" class="o_cy_route_chip o_cy_route_chip--final">
+                            <i class="fa fa-exchange"/>
+                            <div>
+                                <div class="o_cy_route_label">Temporary Destination</div>
+                                <div class="o_cy_route_value">Stack B</div>
+                            </div>
+                        </div>
+                        <div t-elif="isRestoreScreen" class="o_cy_route_chip o_cy_route_chip--final">
+                            <i class="fa fa-reply"/>
+                            <div>
+                                <div class="o_cy_route_label">Temporary Source</div>
+                                <div class="o_cy_route_value">Stack B → return to A</div>
+                            </div>
+                        </div>
+                        <div t-else="" class="o_cy_route_chip o_cy_route_chip--final">
+                            <i class="fa fa-ellipsis-h"/>
+                            <div>
+                                <div class="o_cy_route_label">Final Destination</div>
+                                <div class="o_cy_route_value">Conveyor Belt</div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="o_cy_body">
+                    <div class="o_cy_main">
+
+                        <div class="o_cy_kpis">
+                            <t t-if="isMoveScreen">
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">Plates to Move</span>
+                                    <span class="o_cy_kpi_icon o_cy_kpi_icon--primary"><i class="fa fa-exchange"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value"><t t-esc="blockerIds.length"/> <small>plates</small></div>
+                                <div class="o_cy_kpi_sub">On top of green plates</div>
+                            </div>
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">Moved to Stack B</span>
+                                    <span class="o_cy_kpi_icon o_cy_kpi_icon--green"><i class="fa fa-check"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value"><t t-esc="movedCount"/> <small>plates</small></div>
+                                <div class="o_cy_kpi_sub">Placed on Stack B</div>
+                            </div>
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">Green Plates</span>
+                                    <span class="o_cy_kpi_icon o_cy_kpi_icon--green"><i class="fa fa-th-list"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value"><t t-esc="totalRequired"/> <small>plates</small></div>
+                                <div class="o_cy_kpi_sub">To Conveyor Belt (by SR)</div>
+                            </div>
+                            </t>
+                            <t t-elif="isRestoreScreen">
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">To Return</span>
+                                    <span class="o_cy_kpi_icon o_cy_kpi_icon--primary"><i class="fa fa-reply"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value"><t t-esc="temporaryPlateIds.length"/> <small>plates</small></div>
+                                <div class="o_cy_kpi_sub">On temporary Stack B</div>
+                            </div>
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">Ready Now</span>
+                                    <span class="o_cy_kpi_icon o_cy_kpi_icon--green"><i class="fa fa-check"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value"><t t-esc="nextReturnId ? 1 : 0"/> <small>plate</small></div>
+                                <div class="o_cy_kpi_sub" t-esc="nextReturnId || 'Waiting'"/>
+                            </div>
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">Green Remaining</span>
+                                    <span class="o_cy_kpi_icon o_cy_kpi_icon--green"><i class="fa fa-th-list"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value"><t t-esc="remainingCount"/> <small>plates</small></div>
+                                <div class="o_cy_kpi_sub">Still to pick before full return</div>
+                            </div>
+                            </t>
+                            <t t-else="">
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">Plates Required</span>
+                                    <span class="o_cy_kpi_icon o_cy_kpi_icon--green"><i class="fa fa-th-list"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value"><t t-esc="totalRequired"/> <small>plates</small></div>
+                                <div class="o_cy_kpi_sub">Green plates in Stack A</div>
+                            </div>
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">Remaining</span>
+                                    <span class="o_cy_kpi_icon o_cy_kpi_icon--primary"><i class="fa fa-clock-o"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value"><t t-esc="remainingCount"/> <small>plates</small></div>
+                                <div class="o_cy_kpi_sub">Still to place on Conveyor</div>
+                            </div>
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">On Conveyor</span>
+                                    <span class="o_cy_kpi_icon o_cy_kpi_icon--green"><i class="fa fa-check"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value"><t t-esc="completedCount"/> / <t t-esc="totalRequired"/></div>
+                                <div class="o_cy_progress"><div class="o_cy_progress_bar o_cy_progress_bar--green" t-attf-style="width: {{progressPercent}}%"/></div>
+                            </div>
+                            </t>
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">Crane Status</span>
+                                    <span t-attf-class="o_cy_kpi_icon o_cy_kpi_icon--{{craneStatus.tone}}"><i class="fa fa-arrows-v"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value" t-esc="craneStatus.title"/>
+                                <div class="o_cy_kpi_sub" t-esc="craneStatus.text"/>
+                            </div>
+                        </div>
+
+                        <section class="o_cy_card o_cy_yard_card">
+                            <div class="o_cy_card_head">
+                                <div>
+                                    <h2 class="o_cy_card_title">Yard View</h2>
+                                </div>
+                            </div>
+
+                            <div class="o_cy_steps">
+                                <div t-foreach="steps" t-as="step" t-key="step.id"
+                                     t-attf-class="o_cy_step o_cy_step--{{step.state}}">
+                                    <span class="o_cy_step_num">
+                                        <i t-if="step.state === 'done'" class="fa fa-check"/>
+                                        <t t-else="" t-esc="step.id"/>
+                                    </span>
+                                    <span class="o_cy_step_label" t-esc="step.label"/>
+                                </div>
+                            </div>
+
+                            <div class="o_cy_yard">
+                                <div class="o_cy_gantry">
+                                    <div class="o_cy_rail"/>
+                                    <div class="o_cy_trolley" t-attf-style="left: {{cranePosition}}%">
+                                        <div class="o_cy_trolley_body"><i class="fa fa-arrows-v"/> CRANE</div>
+                                        <div class="o_cy_cable"/>
+                                        <div t-if="state.crane.load"
+                                             t-att-class="plateClass(state.crane.load) + ' o_cy_hook_plate'"
+                                             t-att-title="plateTooltip(state.crane.load)">
+                                            <div class="o_cy_plate_main">
+                                                <span class="o_cy_plate_id" t-esc="state.crane.load"/>
+                                                <span class="o_cy_plate_ids">
+                                                    <span class="o_cy_plate_sr" t-esc="state.plates[state.crane.load].srNumber"/>
+                                                    <span class="o_cy_plate_so" t-esc="state.plates[state.crane.load].soNumber"/>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div t-else="" class="o_cy_hook"/>
+                                    </div>
+                                </div>
+
+                                <div t-attf-class="o_cy_columns {{isMoveScreen or isRestoreScreen ? 'o_cy_columns--two' : ''}}">
+                                    <div t-foreach="stackColumns" t-as="col" t-key="col.key" class="o_cy_column">
+                                        <div class="o_cy_column_head">
+                                            <span t-attf-class="o_cy_role o_cy_role--{{col.roleClass}}" t-esc="col.role"/>
+                                            <span class="o_cy_column_name" t-esc="col.name"/>
+                                            <span class="o_cy_column_count"><t t-esc="state.stacks[col.key].length"/> plates</span>
+                                        </div>
+                                        <div class="o_cy_stack">
+                                            <t t-foreach="state.stacks[col.key]" t-as="plateId" t-key="plateId">
+                                                <t t-call="crane_yard_operator.Plate"/>
+                                            </t>
+                                            <div t-foreach="col.ghosts" t-as="ghost" t-key="ghost_index"
+                                                 t-attf-class="o_cy_ghost {{isRestoreScreen ? 'o_cy_ghost--drop' : 'o_cy_ghost--move'}}">
+                                                <i t-attf-class="fa {{isRestoreScreen ? 'fa-reply' : 'fa-long-arrow-down'}}"/>
+                                                <t t-esc="isRestoreScreen ? 'Return here' : 'From Stack A'"/>
+                                            </div>
+                                        </div>
+                                        <div class="o_cy_ground"/>
+                                    </div>
+
+                                    <div t-if="isDropScreen" class="o_cy_column o_cy_column--conveyor">
+                                        <div class="o_cy_column_head">
+                                            <span class="o_cy_role o_cy_role--final">Final Drop</span>
+                                            <span class="o_cy_column_name"><i class="fa fa-ellipsis-h"/> Conveyor Belt</span>
+                                            <span class="o_cy_column_count"><t t-esc="completedCount"/> / <t t-esc="totalRequired"/> loaded</span>
+                                        </div>
+                                        <div class="o_cy_conveyor">
+                                            <div class="o_cy_conveyor_rail">
+                                                <div class="o_cy_conveyor_belt">
+                                                    <div t-foreach="conveyorPlates" t-as="plate" t-key="plate.id"
+                                                         t-attf-class="o_cy_conveyor_plate {{plate.id === state.landedId ? 'is-landed' : ''}}"
+                                                         t-att-title="plateTooltip(plate.id)"
+                                                         t-on-click="() => this.selectPlate(plate.id)">
+                                                        <span class="o_cy_conveyor_plate_id" t-esc="plate.id"/>
+                                                        <span class="o_cy_conveyor_plate_sr" t-esc="plate.srNumber"/>
+                                                        <span class="o_cy_conveyor_plate_so" t-esc="plate.soNumber"/>
+                                                    </div>
+                                                    <div t-foreach="conveyorGhosts" t-as="ghost" t-key="ghost"
+                                                         class="o_cy_ghost o_cy_ghost--drop o_cy_ghost--conveyor">
+                                                        <i class="fa fa-long-arrow-down"/> Drop here
+                                                    </div>
+                                                    <div t-if="!state.stacks.C.length and !conveyorGhosts.length" class="o_cy_empty">
+                                                        Conveyor empty
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="o_cy_conveyor_rollers">
+                                                <span/><span/><span/><span/><span/><span/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="o_cy_actions">
+                            <button type="button" class="o_cy_btn o_cy_btn--outline"
+                                    t-att-disabled="state.busy" t-on-click="reset">
+                                <i class="fa fa-refresh"/> Reset
+                            </button>
+                            <t t-if="isMoveScreen">
+                                <button type="button"
+                                        t-attf-class="o_cy_btn {{currentStep === 3 ? 'o_cy_btn--primary' : 'o_cy_btn--soft'}}"
+                                        t-att-disabled="state.busy or !blockerIds.length"
+                                        t-on-click="moveUpperPlates">
+                                    <i class="fa fa-exchange"/> Move Upper Plates
+                                    <span t-if="blockerIds.length" class="o_cy_btn_badge" t-esc="blockerIds.length"/>
+                                </button>
+                                <button type="button"
+                                        t-attf-class="o_cy_btn {{currentStep !== 3 ? 'o_cy_btn--primary' : 'o_cy_btn--soft'}}"
+                                        t-att-disabled="state.busy or currentStep === 3"
+                                        t-on-click="openDropScreen">
+                                    Next: Drop to Conveyor <i class="fa fa-long-arrow-right"/>
+                                </button>
+                            </t>
+                            <t t-elif="isRestoreScreen">
+                                <button type="button" class="o_cy_btn o_cy_btn--soft"
+                                        t-att-disabled="state.busy"
+                                        t-on-click="openDropScreen">
+                                    <i class="fa fa-long-arrow-left"/> Back: Drop to Conveyor
+                                </button>
+                                <button type="button"
+                                        t-attf-class="o_cy_btn {{nextReturnId ? 'o_cy_btn--primary' : 'o_cy_btn--soft'}}"
+                                        t-att-disabled="state.busy or !nextReturnId"
+                                        t-on-click="returnTemporaryPlates">
+                                    <i class="fa fa-reply"/> Return Temporary Plates
+                                    <span t-if="temporaryPlateIds.length" class="o_cy_btn_badge" t-esc="temporaryPlateIds.length"/>
+                                </button>
+                            </t>
+                            <t t-else="">
+                                <button t-if="currentStep === 3" type="button"
+                                        class="o_cy_btn o_cy_btn--soft"
+                                        t-att-disabled="state.busy"
+                                        t-on-click="openMoveScreen">
+                                    <i class="fa fa-long-arrow-left"/> Back: Move Upper Plates
+                                </button>
+                                <button type="button"
+                                        t-attf-class="o_cy_btn {{currentStep === 4 ? 'o_cy_btn--primary' : 'o_cy_btn--soft'}}"
+                                        t-att-disabled="state.busy or !nextPickId"
+                                        t-on-click="pickAndDrop">
+                                    <i class="fa fa-ellipsis-h"/> Pick &amp; Drop to Conveyor
+                                    <span t-if="nextPickId" class="o_cy_btn_badge" t-esc="nextPickId"/>
+                                </button>
+                                <button t-if="currentStep === 6 and temporaryPlateIds.length" type="button"
+                                        class="o_cy_btn o_cy_btn--primary"
+                                        t-att-disabled="state.busy"
+                                        t-on-click="openRestoreScreen">
+                                    Next: Return Temporary Plates <i class="fa fa-long-arrow-right"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <aside class="o_cy_side">
+                        <section class="o_cy_card o_cy_side_card">
+                            <h2 class="o_cy_card_title">Next Action</h2>
+                            <div t-attf-class="o_cy_alert o_cy_alert--{{nextAction.tone}}">
+                                <div class="o_cy_alert_title">
+                                    <i t-attf-class="fa {{nextAction.icon}}"/>
+                                    <t t-esc="nextAction.title"/>
+                                </div>
+                                <div class="o_cy_alert_text" t-esc="nextAction.text"/>
+                            </div>
+                        </section>
+
+                        <section t-if="selectedPlate" class="o_cy_card o_cy_side_card">
+                            <h2 class="o_cy_card_title">Plate Details</h2>
+                            <div class="o_cy_plate_detail">
+                                <div class="o_cy_plate_detail_row"><span>Plate</span><strong t-esc="selectedPlate.id"/></div>
+                                <div class="o_cy_plate_detail_row"><span>SR Number</span><strong t-esc="selectedPlate.srNumber"/></div>
+                                <div class="o_cy_plate_detail_row"><span>Sales Order</span><strong t-esc="selectedPlate.soNumber"/></div>
+                                <div class="o_cy_plate_detail_row"><span>Status</span><strong t-esc="selectedPlate.status"/></div>
+                                <div class="o_cy_plate_detail_row"><span>Location</span><strong t-esc="selectedPlate.location"/></div>
+                                <div class="o_cy_plate_detail_row"><span>Size</span><strong t-esc="selectedPlate.size"/></div>
+                            </div>
+                        </section>
+
+                        <section class="o_cy_card o_cy_side_card">
+                            <h2 class="o_cy_card_title">Pick List (by SR)</h2>
+                            <div t-if="!pickListBySr.length" class="o_cy_empty">No plates to pick.</div>
+                            <div t-foreach="pickListBySr" t-as="item" t-key="item.id"
+                                 role="button" tabindex="0"
+                                 t-attf-class="o_cy_plate_row o_cy_plate_row--{{item.status}} {{item.id === state.selectedId ? 'is-selected' : ''}}"
+                                 t-on-click="() => this.selectPlate(item.id)">
+                                <span class="o_cy_plate_row_dot"/>
+                                <span class="o_cy_plate_row_id" t-esc="item.id"/>
+                                <span class="o_cy_plate_row_meta"><t t-esc="item.srNumber"/> · <t t-esc="item.soNumber"/></span>
+                                <span class="o_cy_plate_row_status" t-esc="item.label"/>
+                            </div>
+                        </section>
+
+                        <section t-if="isMoveScreen or isRestoreScreen" class="o_cy_card o_cy_side_card">
+                            <h2 class="o_cy_card_title" t-esc="isRestoreScreen ? 'Temporary → Original' : 'Stacks'"/>
+                            <div t-foreach="plateGroups" t-as="group" t-key="group.key" class="o_cy_plate_group">
+                                <div class="o_cy_plate_group_head">
+                                    <span t-esc="group.name"/>
+                                    <span class="o_cy_plate_group_count"><t t-esc="group.plates.length"/> plates</span>
+                                </div>
+                                <div t-if="!group.plates.length" class="o_cy_empty">No plates</div>
+                                <div t-foreach="group.plates" t-as="item" t-key="item.id"
+                                     role="button" tabindex="0"
+                                     t-attf-class="o_cy_plate_row o_cy_plate_row--{{item.status}} {{item.id === state.selectedId ? 'is-selected' : ''}}"
+                                     t-on-click="() => this.selectPlate(item.id)">
+                                    <span class="o_cy_plate_row_dot"/>
+                                    <span class="o_cy_plate_row_id" t-esc="item.id"/>
+                                    <span class="o_cy_plate_row_meta">
+                                        <t t-esc="item.srNumber"/> · <t t-esc="item.soNumber"/>
+                                        <t t-if="item.homeLabel"> · <t t-esc="item.homeLabel"/></t>
+                                    </span>
+                                    <span class="o_cy_plate_row_status" t-esc="item.label"/>
+                                </div>
+                            </div>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+            </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

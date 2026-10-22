@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="crane_yard_operator.TruckVerificationTaskAllocation">
+    <div class="o_action o_cy h-100">
+        <div class="o_cy_layout">
+            <CraneYardNav active="navKey"/>
+            <div class="o_cy_content">
+                <div class="o_cy_truck_ops">
+
+                    <header class="cy-header">
+                        <div class="cy-breadcrumb">Yard Management <span>/</span> <span class="cy-breadcrumb-active">Truck Operations</span></div>
+                        <h1 class="cy-title">Truck Verification &amp; Task Allocation</h1>
+                        <p class="cy-subtitle">Verify incoming trucks at the gate, then allocate Pick Up or Put Away tasks to the driver.</p>
+                    </header>
+
+                    <t t-if="state.alert">
+                        <div t-attf-class="cy-alert cy-alert-{{state.alert.tone}}">
+                            <span t-esc="state.alert.text"/>
+                            <button type="button" class="cy-alert-close" t-on-click="clearAlert">×</button>
+                        </div>
+                    </t>
+
+                    <!-- Summary cards -->
+                    <div class="cy-summary-row">
+                        <div class="cy-card cy-card-orange">
+                            <div class="cy-card-label">Trucks Awaiting Verification</div>
+                            <div class="cy-card-value" t-esc="summary.awaiting"/>
+                        </div>
+                        <div class="cy-card cy-card-green">
+                            <div class="cy-card-label">Verified Trucks</div>
+                            <div class="cy-card-value" t-esc="summary.verified"/>
+                        </div>
+                        <div class="cy-card cy-card-blue">
+                            <div class="cy-card-label">Tasks Assigned</div>
+                            <div class="cy-card-value" t-esc="summary.assigned"/>
+                        </div>
+                        <div class="cy-card cy-card-blue">
+                            <div class="cy-card-label">Tasks In Progress</div>
+                            <div class="cy-card-value" t-esc="summary.inProgress"/>
+                        </div>
+                        <div class="cy-card cy-card-green">
+                            <div class="cy-card-label">Tasks Completed</div>
+                            <div class="cy-card-value" t-esc="summary.completed"/>
+                        </div>
+                    </div>
+
+                    <div class="cy-main-grid">
+                        <!-- STEP 1: Truck Verification -->
+                        <section class="cy-panel">
+                            <div class="cy-panel-head">
+                                <h2>1. Truck Verification</h2>
+                                <span t-attf-class="cy-badge cy-badge-{{state.verify.status}}">
+                                    <t t-if="state.verify.status === 'verified'">Verified</t>
+                                    <t t-elif="state.verify.status === 'failed'">Failed</t>
+                                    <t t-else="">Pending</t>
+                                </span>
+                            </div>
+                            <div class="cy-form-grid">
+                                <label>
+                                    <span>Truck Number / Vehicle Registration</span>
+                                    <input type="text" placeholder="e.g. MH-12-AB-4521"
+                                           t-model="state.verify.truckNumber"
+                                           t-on-blur="onTruckNumberBlur"/>
+                                </label>
+                                <label>
+                                    <span>Driver Name</span>
+                                    <input type="text" t-model="state.verify.driverName"/>
+                                </label>
+                                <label>
+                                    <span>Driver ID</span>
+                                    <input type="text" placeholder="e.g. DRV-2041" t-model="state.verify.driverId"/>
+                                </label>
+                                <label>
+                                    <span>Driver Mobile Number</span>
+                                    <input type="tel" t-model="state.verify.mobile"/>
+                                </label>
+                                <label>
+                                    <span>Transport Company</span>
+                                    <input type="text" t-model="state.verify.company"/>
+                                </label>
+                                <label>
+                                    <span>Arrival Date and Time</span>
+                                    <input type="datetime-local" t-model="state.verify.arrivalAt"/>
+                                </label>
+                                <label>
+                                    <span>Truck Type</span>
+                                    <select t-model="state.verify.truckType">
+                                        <t t-foreach="truckTypes" t-as="tt" t-key="tt">
+                                            <option t-att-value="tt" t-esc="tt"/>
+                                        </t>
+                                    </select>
+                                </label>
+                                <label>
+                                    <span>Material Type</span>
+                                    <select t-model="state.verify.materialType">
+                                        <option value="Pipe">Pipe</option>
+                                        <option value="Plate">Plate</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    <span>Sales Order Number (SO)</span>
+                                    <input type="text" placeholder="SO-1001" t-model="state.verify.soNumber"/>
+                                </label>
+                                <label>
+                                    <span>SR Number</span>
+                                    <input type="text" placeholder="SR-001" t-model="state.verify.srNumber"/>
+                                </label>
+                                <label class="cy-span-2">
+                                    <span>Verification Status</span>
+                                    <div class="cy-status-line">
+                                        <span t-attf-class="cy-badge cy-badge-{{state.verify.status}}">
+                                            <t t-if="state.verify.status === 'verified'">Verified</t>
+                                            <t t-elif="state.verify.status === 'failed'">Failed</t>
+                                            <t t-else="">Awaiting Verification</t>
+                                        </span>
+                                        <span class="cy-status-msg" t-if="state.verify.message" t-esc="state.verify.message"/>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="cy-actions">
+                                <button type="button" class="cy-btn cy-btn-primary" t-on-click="verifyTruck">
+                                    <i class="fa fa-check-circle"/> Verify Truck
+                                </button>
+                                <button type="button" class="cy-btn cy-btn-ghost" t-on-click="clearVerifyForm">
+                                    Clear Form
+                                </button>
+                            </div>
+                            <p class="cy-hint">
+                                Demo gate trucks: <strong>MH-12-AB-4521</strong>, <strong>MH-14-CD-7788</strong>, <strong>GJ-01-XY-9922</strong>
+                                (enter number then leave the field to auto-fill).
+                            </p>
+                        </section>
+
+                        <!-- STEP 2: Task Allocation -->
+                        <section t-attf-class="cy-panel {{isVerified ? '' : 'cy-panel-disabled'}}">
+                            <div class="cy-panel-head">
+                                <h2>2. Allocate Task to Driver</h2>
+                                <span t-if="!isVerified" class="cy-badge cy-badge-pending">Verify truck first</span>
+                                <span t-else="" class="cy-badge cy-badge-verified">Ready to allocate</span>
+                            </div>
+
+                            <t t-if="isVerified">
+                                <div class="cy-verified-strip">
+                                    <div><span class="lbl">Task for</span> <strong t-esc="state.verifiedTruck.truckNumber"/></div>
+                                    <div><span class="lbl">Driver</span> <strong t-esc="state.verifiedTruck.driverName"/></div>
+                                    <div><span class="lbl">SO</span> <strong t-esc="state.verifiedTruck.soNumber"/></div>
+                                    <div><span class="lbl">SR</span> <strong t-esc="state.verifiedTruck.srNumber"/></div>
+                                </div>
+
+                                <div class="cy-form-grid">
+                                    <label>
+                                        <span>Task Type</span>
+                                        <select t-model="state.taskForm.taskType" t-on-change="onTaskTypeChange">
+                                            <option value="Pick Up">Pick Up</option>
+                                            <option value="Put Away">Put Away</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>Material Type</span>
+                                        <select t-model="state.taskForm.materialType" t-on-change="onMaterialChange">
+                                            <option value="Pipe">Pipe</option>
+                                            <option value="Plate">Plate</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        <span>Sales Order Number</span>
+                                        <input type="text" t-model="state.taskForm.soNumber"/>
+                                    </label>
+                                    <label>
+                                        <span>SR Number</span>
+                                        <input type="text" t-model="state.taskForm.srNumber"/>
+                                    </label>
+                                    <label>
+                                        <span t-esc="locationHints.sourceLabel"/>
+                                        <t t-if="state.taskForm.taskType === 'Pick Up'">
+                                            <select t-model="state.taskForm.sourceBin">
+                                                <t t-foreach="binOptions" t-as="b" t-key="b">
+                                                    <option t-att-value="b" t-esc="b"/>
+                                                </t>
+                                            </select>
+                                        </t>
+                                        <t t-else="">
+                                            <input type="text" t-att-value="locationHints.sourceValue" readonly="1"/>
+                                        </t>
+                                    </label>
+                                    <label>
+                                        <span t-esc="locationHints.destLabel"/>
+                                        <t t-if="state.taskForm.taskType === 'Put Away'">
+                                            <select t-model="state.taskForm.destinationBin">
+                                                <t t-foreach="binOptions" t-as="b" t-key="b">
+                                                    <option t-att-value="b" t-esc="b"/>
+                                                </t>
+                                            </select>
+                                        </t>
+                                        <t t-else="">
+                                            <input type="text" t-att-value="locationHints.destValue" readonly="1"/>
+                                        </t>
+                                    </label>
+                                    <label>
+                                        <span>Quantity</span>
+                                        <input type="number" min="1" t-model.number="state.taskForm.quantity"/>
+                                    </label>
+                                    <label>
+                                        <span>Task Priority</span>
+                                        <select t-model="state.taskForm.priority">
+                                            <t t-foreach="priorities" t-as="p" t-key="p">
+                                                <option t-att-value="p" t-esc="p"/>
+                                            </t>
+                                        </select>
+                                    </label>
+                                    <label t-if="state.taskForm.taskType === 'Put Away'" class="cy-span-2 cy-check-row">
+                                        <input type="checkbox" t-model="state.taskForm.useTemp"/>
+                                        <span>Assigned bin unavailable — use temporary location</span>
+                                    </label>
+                                    <label t-if="state.taskForm.taskType === 'Put Away' and state.taskForm.useTemp">
+                                        <span>Temporary Location</span>
+                                        <select t-model="state.taskForm.tempLocation">
+                                            <option value="">— Select —</option>
+                                            <option value="TEMP-01">TEMP-01</option>
+                                            <option value="TEMP-02">TEMP-02</option>
+                                        </select>
+                                    </label>
+                                </div>
+
+                                <div class="cy-loc-note">
+                                    <i class="fa fa-map-marker"/> <span t-esc="locationHints.note"/>
+                                </div>
+                                <div class="cy-stock-line" t-if="state.taskForm.taskType === 'Pick Up'">
+                                    <span class="lbl">Available at source:</span>
+                                    <strong t-esc="stockInfo.label"/>
+                                </div>
+
+                                <div class="cy-task-preview">
+                                    <div><span class="lbl">Items to Pick</span> <strong t-esc="state.taskForm.quantity"/></div>
+                                    <div><span class="lbl">Items to Drop</span> <strong t-esc="state.taskForm.quantity"/></div>
+                                    <div><span class="lbl">Source</span> <strong t-esc="locationHints.sourceValue"/></div>
+                                    <div><span class="lbl">Destination</span> <strong t-esc="locationHints.destValue"/></div>
+                                </div>
+
+                                <div class="cy-actions">
+                                    <button type="button" class="cy-btn cy-btn-primary" t-on-click="assignTask">
+                                        <i class="fa fa-tasks"/> Assign Task
+                                    </button>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <p class="cy-locked">Complete truck verification to unlock task allocation.</p>
+                            </t>
+                        </section>
+                    </div>
+
+                    <!-- Assigned Tasks Table -->
+                    <section class="cy-panel cy-panel-table">
+                        <div class="cy-panel-head">
+                            <h2>Assigned Tasks</h2>
+                        </div>
+                        <div class="cy-table-wrap">
+                            <table class="cy-table">
+                                <thead>
+                                    <tr>
+                                        <th>Task ID</th>
+                                        <th>Truck</th>
+                                        <th>Driver</th>
+                                        <th>Type</th>
+                                        <th>Material</th>
+                                        <th>SO</th>
+                                        <th>SR</th>
+                                        <th>Qty</th>
+                                        <th>Source</th>
+                                        <th>Destination</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="state.tasks" t-as="task" t-key="task.id">
+                                        <tr>
+                                            <td t-esc="task.id"/>
+                                            <td t-esc="task.truckNumber"/>
+                                            <td t-esc="task.driverName"/>
+                                            <td t-esc="task.taskType"/>
+                                            <td t-esc="task.materialType"/>
+                                            <td t-esc="task.soNumber"/>
+                                            <td t-esc="task.srNumber"/>
+                                            <td t-esc="task.quantity"/>
+                                            <td t-esc="task.sourceBin"/>
+                                            <td>
+                                                <span t-esc="task.destinationBin"/>
+                                                <t t-if="task.tempLocation">
+                                                    <div class="cy-temp-tag">via <t t-esc="task.tempLocation"/></div>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <span t-attf-class="cy-badge cy-badge-{{statusClass(task.status)}}" t-esc="task.status"/>
+                                            </td>
+                                            <td class="cy-row-actions">
+                                                <button type="button" class="cy-link" t-on-click="() => this.openTask(task)">View</button>
+                                                <button type="button" class="cy-link"
+                                                        t-att-disabled="!canEdit(task)"
+                                                        t-on-click="() => this.editTask(task)">Edit</button>
+                                                <button type="button" class="cy-link cy-link-blue"
+                                                        t-att-disabled="!canStart(task)"
+                                                        t-on-click="() => this.startTask(task)">Start</button>
+                                                <button type="button" class="cy-link cy-link-green"
+                                                        t-att-disabled="!canComplete(task)"
+                                                        t-on-click="() => this.completeTask(task)">Complete</button>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- View / Edit Modal -->
+                    <t t-if="viewTask">
+                        <div class="cy-modal-backdrop" t-on-click="closeView"/>
+                        <div class="cy-modal">
+                            <div class="cy-modal-head">
+                                <h3>
+                                    <t t-if="state.editingTaskId === viewTask.id">Edit Task </t>
+                                    <t t-else="">View Task </t>
+                                    <span t-esc="viewTask.id"/>
+                                </h3>
+                                <button type="button" class="cy-alert-close" t-on-click="closeView">×</button>
+                            </div>
+                            <div class="cy-modal-body">
+                                <div class="cy-form-grid">
+                                    <label><span>Truck Number</span><input type="text" t-att-value="viewTask.truckNumber" readonly="1"/></label>
+                                    <label><span>Driver Name</span><input type="text" t-att-value="viewTask.driverName" readonly="1"/></label>
+                                    <label><span>Task Type</span><input type="text" t-att-value="viewTask.taskType" readonly="1"/></label>
+                                    <label><span>Material Type</span><input type="text" t-att-value="viewTask.materialType" readonly="1"/></label>
+                                    <label><span>SO Number</span><input type="text" t-att-value="viewTask.soNumber" readonly="1"/></label>
+                                    <label><span>SR Number</span><input type="text" t-att-value="viewTask.srNumber" readonly="1"/></label>
+                                    <label>
+                                        <span>Quantity</span>
+                                        <input type="number" min="1"
+                                               t-att-readonly="state.editingTaskId !== viewTask.id"
+                                               t-model.number="viewTask.quantity"/>
+                                    </label>
+                                    <label><span>Priority</span><input type="text" t-att-value="viewTask.priority" readonly="1"/></label>
+                                    <label><span>Source Location</span><input type="text" t-att-value="viewTask.sourceBin" readonly="1"/></label>
+                                    <label><span>Destination Location</span><input type="text" t-att-value="viewTask.destinationBin" readonly="1"/></label>
+                                    <label t-if="viewTask.tempLocation" class="cy-span-2">
+                                        <span>Temporary Location</span>
+                                        <input type="text" t-att-value="viewTask.tempLocation" readonly="1"/>
+                                    </label>
+                                    <label class="cy-span-2">
+                                        <span t-esc="viewTask.materialType === 'Pipe' ? 'Pipe IDs' : 'Plate IDs'"/>
+                                        <input type="text" t-att-value="itemIdsLabel(viewTask)" readonly="1"/>
+                                    </label>
+                                    <label class="cy-span-2" t-if="viewTask.itemMeta">
+                                        <span>Details</span>
+                                        <input type="text" t-att-value="viewTask.itemMeta" readonly="1"/>
+                                    </label>
+                                    <label>
+                                        <span>Task Status</span>
+                                        <span t-attf-class="cy-badge cy-badge-{{statusClass(viewTask.status)}}" t-esc="viewTask.status"/>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="cy-actions">
+                                <t t-if="state.editingTaskId === viewTask.id">
+                                    <button type="button" class="cy-btn cy-btn-primary" t-on-click="() => this.saveEdit(viewTask)">Save Changes</button>
+                                </t>
+                                <button type="button" class="cy-btn cy-btn-ghost" t-on-click="closeView">Close</button>
+                            </div>
+                        </div>
+                    </t>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

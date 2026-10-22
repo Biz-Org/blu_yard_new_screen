@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_truck_ops" model="ir.actions.client">
+        <field name="name">Truck Verification &amp; Task Allocation</field>
+        <field name="tag">crane_yard_operator.truck_ops</field>
+    </record>
+
+    <record id="action_plate_put_away" model="ir.actions.client">
+        <field name="name">Plate Put Away</field>
+        <field name="tag">crane_yard_operator.plate_put_away</field>
+    </record>
+
+    <record id="action_plate_put_away_top" model="ir.actions.client">
+        <field name="name">Plate Put Away (Top View)</field>
+        <field name="tag">crane_yard_operator.plate_put_away_top</field>
+    </record>
+
+    <record id="action_pipe_put_away" model="ir.actions.client">
+        <field name="name">Pipe Put Away</field>
+        <field name="tag">crane_yard_operator.pipe_put_away</field>
+    </record>
+
+    <record id="action_move_plates" model="ir.actions.client">
+        <field name="name">Move Upper Plates</field>
+        <field name="tag">crane_yard_operator.move_plates</field>
+    </record>
+
+    <record id="action_drop_truck" model="ir.actions.client">
+        <field name="name">Drop to Conveyor</field>
+        <field name="tag">crane_yard_operator.drop_truck</field>
+    </record>
+
+    <record id="action_return_plates" model="ir.actions.client">
+        <field name="name">Return Temporary Plates</field>
+        <field name="tag">crane_yard_operator.return_plates</field>
+    </record>
+
+    <record id="action_pipe_unstack" model="ir.actions.client">
+        <field name="name">Pipe Picking - Unstack Upper Pipes</field>
+        <field name="tag">crane_yard_operator.pipe_unstack</field>
+    </record>
+
+    <record id="action_pipe_drop" model="ir.actions.client">
+        <field name="name">Pipe Picking - Drop to Truck</field>
+        <field name="tag">crane_yard_operator.pipe_drop</field>
+    </record>
+
+    <record id="action_pipe_return" model="ir.actions.client">
+        <field name="name">Pipe Picking - Return Temporary Pipes</field>
+        <field name="tag">crane_yard_operator.pipe_return</field>
+    </record>
+
+    <menuitem id="menu_crane_yard_root"
+              name="Crane Yard"
+              action="action_truck_ops"
+              sequence="60"/>
+
+    <menuitem id="menu_truck_ops"
+              name="Truck Operations"
+              parent="menu_crane_yard_root"
+              sequence="1"/>
+
+    <menuitem id="menu_truck_verify_allocate"
+              name="Verify &amp; Allocate"
+              parent="menu_truck_ops"
+              action="action_truck_ops"
+              sequence="10"/>
+
+    <menuitem id="menu_put_away"
+              name="Put Away"
+              parent="menu_crane_yard_root"
+              sequence="5"/>
+
+    <menuitem id="menu_plate_put_away"
+              name="Plate Put Away"
+              parent="menu_put_away"
+              action="action_plate_put_away"
+              sequence="10"/>
+
+    <menuitem id="menu_plate_put_away_top"
+              name="Plate Put Away (Top View)"
+              parent="menu_put_away"
+              action="action_plate_put_away_top"
+              sequence="15"/>
+
+    <menuitem id="menu_pipe_put_away"
+              name="Pipe Put Away"
+              parent="menu_put_away"
+              action="action_pipe_put_away"
+              sequence="20"/>
+
+    <menuitem id="menu_move_plates"
+              name="Move Upper Plates"
+              parent="menu_crane_yard_root"
+              action="action_move_plates"
+              sequence="10"/>
+
+    <menuitem id="menu_drop_truck"
+              name="Drop to Conveyor"
+              parent="menu_crane_yard_root"
+              action="action_drop_truck"
+              sequence="20"/>
+
+    <menuitem id="menu_return_plates"
+              name="Return Temporary Plates"
+              parent="menu_crane_yard_root"
+              action="action_return_plates"
+              sequence="25"/>
+
+    <menuitem id="menu_pipe_picking"
+              name="Pipe Picking &amp; Dropping"
+              parent="menu_crane_yard_root"
+              sequence="30"/>
+
+    <menuitem id="menu_pipe_unstack"
+              name="Unstack Upper Pipes"
+              parent="menu_pipe_picking"
+              action="action_pipe_unstack"
+              sequence="10"/>
+
+    <menuitem id="menu_pipe_drop"
+              name="Pick &amp; Drop to Truck"
+              parent="menu_pipe_picking"
+              action="action_pipe_drop"
+              sequence="20"/>
+
+    <menuitem id="menu_pipe_return"
+              name="Return Temporary Pipes"
+              parent="menu_pipe_picking"
+              action="action_pipe_return"
+              sequence="30"/>
+</odoo>

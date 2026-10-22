@@ -1,0 +1,1095 @@
+$cy-bg: #f6f6fa;
+$cy-card: #ffffff;
+$cy-border: #e8e8f0;
+$cy-text: #15151f;
+$cy-muted: #6b6b80;
+$cy-primary: #5b3fd6;
+$cy-primary-dark: #4a2fc2;
+$cy-primary-soft: #efeafe;
+$cy-orange: #f59e0b;
+$cy-orange-light: #fbbf24;
+$cy-orange-dark: #d97706;
+$cy-orange-soft: #fff6e5;
+$cy-green: #16a34a;
+$cy-green-light: #22c55e;
+$cy-green-soft: #e8f8ee;
+$cy-steel: #e4e8ee;
+$cy-steel-light: #f1f3f6;
+$cy-steel-border: #b5bfcc;
+$cy-slate: #334155;
+$cy-slate-light: #94a3b8;
+$cy-plate-h: 56px;
+
+/* Fill the full Odoo action area — no centered max-width white gutters */
+.o_action.o_cy,
+.o_cy {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background: $cy-bg;
+    color: $cy-text;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    box-sizing: border-box;
+
+    h1, h2 {
+        margin: 0;
+    }
+}
+
+.o_cy_page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 16px 20px 24px;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+// ---------------------------------------------------------------- Header
+
+.o_cy_header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.o_cy_breadcrumb {
+    font-size: 12px;
+    color: $cy-muted;
+    margin-bottom: 4px;
+}
+
+.o_cy_breadcrumb_active {
+    color: $cy-primary;
+    font-weight: 500;
+}
+
+.o_cy_title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.o_cy_route {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.o_cy_route_chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: $cy-card;
+    border: 1px solid $cy-border;
+    border-radius: 10px;
+    padding: 8px 14px;
+
+    > .fa {
+        font-size: 16px;
+        color: $cy-slate;
+    }
+}
+
+.o_cy_route_chip--final > .fa {
+    color: $cy-primary;
+}
+
+.o_cy_route_label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $cy-muted;
+}
+
+.o_cy_route_value {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.o_cy_route_arrow {
+    color: $cy-slate-light;
+    font-size: 18px;
+}
+
+// ---------------------------------------------------------------- Layout
+
+.o_cy_body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    gap: 20px;
+    align-items: start;
+    width: 100%;
+}
+
+.o_cy_main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
+.o_cy_side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.o_cy_card {
+    background: $cy-card;
+    border: 1px solid $cy-border;
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(20, 20, 40, 0.04);
+}
+
+.o_cy_card_title {
+    font-size: 15px;
+    font-weight: 700;
+    color: $cy-text;
+}
+
+.o_cy_card_sub {
+    font-size: 12px;
+    color: $cy-muted;
+    margin-top: 2px;
+}
+
+// ---------------------------------------------------------------- KPIs
+
+.o_cy_kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.o_cy_kpi {
+    padding: 16px 18px;
+}
+
+.o_cy_kpi_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.o_cy_kpi_label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $cy-muted;
+}
+
+.o_cy_kpi_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 15px;
+    background: $cy-steel-light;
+    color: $cy-slate;
+}
+
+.o_cy_kpi_icon--primary { background: $cy-primary-soft; color: $cy-primary; }
+.o_cy_kpi_icon--orange { background: $cy-orange-soft; color: $cy-orange-dark; }
+.o_cy_kpi_icon--green { background: $cy-green-soft; color: $cy-green; }
+
+.o_cy_kpi_value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+
+    small {
+        font-size: 14px;
+        font-weight: 500;
+        color: $cy-muted;
+    }
+}
+
+.o_cy_kpi_sub {
+    font-size: 12px;
+    color: $cy-muted;
+    margin-top: 6px;
+}
+
+.o_cy_progress {
+    height: 8px;
+    border-radius: 99px;
+    background: $cy-steel;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.o_cy_progress_bar {
+    height: 100%;
+    background: $cy-green-light;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+// ---------------------------------------------------------------- Steps
+
+.o_cy_yard_card {
+    padding: 18px 20px 20px;
+}
+
+.o_cy_card_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.o_cy_steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid $cy-border;
+}
+
+.o_cy_step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px 6px 6px;
+    border-radius: 99px;
+    font-size: 13px;
+    color: $cy-muted;
+    background: $cy-steel-light;
+}
+
+.o_cy_step_num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    background: $cy-steel;
+    color: $cy-muted;
+}
+
+.o_cy_step--done {
+    .o_cy_step_num {
+        background: $cy-green-light;
+        color: #fff;
+    }
+}
+
+.o_cy_step--active {
+    background: $cy-primary-soft;
+    color: $cy-primary;
+    font-weight: 700;
+
+    .o_cy_step_num {
+        background: $cy-primary;
+        color: #fff;
+    }
+}
+
+// ---------------------------------------------------------------- Yard
+
+.o_cy_yard {
+    padding-top: 8px;
+}
+
+.o_cy_gantry {
+    position: relative;
+    height: 112px;
+}
+
+.o_cy_rail {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    border-radius: 4px;
+    background: repeating-linear-gradient(90deg, $cy-slate-light 0 18px, #a9b5c6 18px 36px);
+}
+
+.o_cy_trolley {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    // Keep in sync with TRAVEL_MS in plate_picking.js (700ms).
+    transition: left 0.7s ease-in-out;
+    will-change: left;
+    z-index: 2;
+}
+
+.o_cy_trolley_body {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: $cy-slate;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.o_cy_cable {
+    width: 3px;
+    height: 34px;
+    background: $cy-slate;
+}
+
+.o_cy_hook {
+    width: 22px;
+    height: 16px;
+    border: 4px solid $cy-slate;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+}
+
+.o_cy_columns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: end;
+}
+
+.o_cy_columns--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.o_cy_column {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.o_cy_column_head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.o_cy_role {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    border-radius: 99px;
+    background: $cy-steel-light;
+    color: $cy-slate;
+}
+
+.o_cy_role--source { background: $cy-orange-soft; color: $cy-orange-dark; }
+.o_cy_role--temporary { background: $cy-primary-soft; color: $cy-primary; }
+.o_cy_role--final { background: $cy-green-soft; color: $cy-green; }
+
+.o_cy_column_name {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.o_cy_column_count {
+    font-size: 12px;
+    color: $cy-muted;
+}
+
+.o_cy_stack {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 4px;
+    min-height: 5 * ($cy-plate-h + 4px);
+    padding: 0 8px;
+}
+
+.o_cy_ground {
+    height: 8px;
+    margin-top: 4px;
+    border-radius: 3px;
+    background: repeating-linear-gradient(45deg, $cy-slate-light 0 8px, $cy-steel-border 8px 16px);
+}
+
+// ---------------------------------------------------------------- Plates
+
+.o_cy_plate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    height: $cy-plate-h;
+    padding: 0 14px;
+    border: 2px solid $cy-steel-border;
+    border-radius: 6px;
+    background: linear-gradient(180deg, $cy-steel-light, $cy-steel);
+    color: $cy-slate;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(20, 20, 40, 0.1);
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+    &.is-selected {
+        outline: 3px solid $cy-primary;
+        outline-offset: 3px;
+    }
+
+    &.is-landed {
+        animation: o_cy_land 0.35s ease-out;
+    }
+
+    &.is-next {
+        animation: o_cy_pulse 1.4s ease-in-out infinite;
+    }
+}
+
+.o_cy_plate--pick {
+    background: linear-gradient(180deg, lighten($cy-green, 28%), $cy-green);
+    border-color: darken($cy-green, 8%);
+    color: #14532d;
+}
+
+.o_cy_plate--done {
+    background: linear-gradient(180deg, $cy-green-light, $cy-green);
+    border-color: darken($cy-green, 6%);
+    color: #fff;
+}
+
+.o_cy_plate--relocate {
+    border-style: dashed;
+    border-color: $cy-primary;
+}
+
+.o_cy_plate_main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+}
+
+.o_cy_plate_id {
+    letter-spacing: 0.02em;
+}
+
+.o_cy_plate_ids {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    opacity: 0.92;
+}
+
+.o_cy_plate_sr,
+.o_cy_plate_so {
+    white-space: nowrap;
+}
+
+.o_cy_plate_meta {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.75;
+}
+
+.o_cy_plate_detail {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.o_cy_plate_detail_row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+
+    span {
+        color: $cy-muted;
+    }
+
+    strong {
+        color: $cy-slate;
+        text-align: right;
+    }
+}
+
+.o_cy_progress_bar--green {
+    background: $cy-green;
+}
+
+.o_cy_plate_tag {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.45);
+}
+
+.o_cy_plate_tag--move {
+    background: $cy-primary;
+    color: #fff;
+}
+
+.o_cy_plate_tag--muted {
+    font-weight: 600;
+    background: $cy-card;
+    color: $cy-muted;
+}
+
+.o_cy_plate_truck,
+.o_cy_plate_conveyor_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 30px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: $cy-slate;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+
+    &:hover:not(:disabled) {
+        background: $cy-primary;
+        transform: scale(1.08);
+    }
+
+    &:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+}
+
+.o_cy_hook_plate {
+    width: 180px;
+    height: 38px;
+    justify-content: center;
+    cursor: default;
+    box-shadow: 0 6px 14px rgba(20, 20, 40, 0.18);
+
+    &:hover {
+        transform: none;
+    }
+}
+
+.o_cy_ghost {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: $cy-plate-h;
+    border: 2px dashed;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.o_cy_ghost--move {
+    border-color: $cy-primary;
+    background: rgba($cy-primary-soft, 0.6);
+    color: $cy-primary;
+}
+
+.o_cy_ghost--drop {
+    border-color: $cy-green;
+    background: $cy-green-soft;
+    color: darken($cy-green, 10%);
+}
+
+.o_cy_ghost--conveyor {
+    min-width: 88px;
+    height: 52px;
+    flex: 0 0 auto;
+}
+
+@keyframes o_cy_land {
+    from { transform: translateY(-16px); opacity: 0.3; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes o_cy_pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba($cy-green, 0.55); }
+    50% { box-shadow: 0 0 0 7px rgba($cy-green, 0); }
+}
+
+// ---------------------------------------------------------------- Conveyor Belt
+
+.o_cy_column--conveyor {
+    min-width: 0;
+}
+
+.o_cy_conveyor {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 140px;
+}
+
+.o_cy_conveyor_rail {
+    border: 2px solid $cy-steel-border;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #e8edf3, #d5dbe3);
+    padding: 10px 8px;
+    overflow-x: auto;
+}
+
+.o_cy_conveyor_belt {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    min-height: 64px;
+    padding: 6px;
+    border-radius: 8px;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #94a3b8 0 10px,
+            #64748b 10px 14px,
+            #94a3b8 14px 24px
+        );
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.o_cy_conveyor_plate {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    flex: 0 0 auto;
+    min-width: 110px;
+    height: 52px;
+    padding: 6px 10px;
+    border: 2px solid darken($cy-green, 8%);
+    border-radius: 6px;
+    background: linear-gradient(180deg, lighten($cy-green, 28%), $cy-green);
+    color: #14532d;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(20, 30, 50, 0.18);
+
+    &.is-landed {
+        animation: o_cy_land 0.35s ease-out;
+    }
+}
+
+.o_cy_conveyor_plate_id {
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.o_cy_conveyor_plate_sr,
+.o_cy_conveyor_plate_so {
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.o_cy_conveyor_rollers {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 8px;
+
+    span {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, #cbd5e1, #475569);
+        border: 1px solid #334155;
+    }
+}
+
+// Legacy truck (kept for any residual markup)
+.o_cy_truck_body {
+    display: flex;
+    align-items: flex-end;
+}
+
+.o_cy_truck_bed {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 0 6px;
+    border: 3px solid $cy-slate;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    background: $cy-steel-light;
+
+    .o_cy_stack--truck {
+        min-height: 3 * ($cy-plate-h + 4px);
+    }
+}
+
+.o_cy_truck_cab {
+    position: relative;
+    width: 58px;
+    height: 78px;
+    margin-left: 4px;
+    border-radius: 6px 22px 6px 6px;
+    background: $cy-slate;
+}
+
+.o_cy_truck_window {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 12px;
+    height: 24px;
+    border-radius: 3px 14px 3px 3px;
+    background: #cbd5e1;
+}
+
+.o_cy_truck_chassis {
+    position: relative;
+    height: 10px;
+    margin-top: 2px;
+    border-radius: 3px;
+    background: $cy-slate;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 18%;
+}
+
+.o_cy_wheel {
+    width: 26px;
+    height: 26px;
+    margin-top: 2px;
+    border-radius: 50%;
+    border: 6px solid #1e293b;
+    background: $cy-slate-light;
+}
+
+// ---------------------------------------------------------------- Actions
+
+.o_cy_actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.o_cy_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+}
+
+.o_cy_btn--outline {
+    background: $cy-card;
+    border-color: $cy-border;
+    color: $cy-text;
+
+    &:hover:not(:disabled) {
+        background: $cy-steel-light;
+    }
+}
+
+.o_cy_btn--soft {
+    background: $cy-primary-soft;
+    color: $cy-primary;
+}
+
+.o_cy_btn--primary {
+    background: $cy-primary;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+        background: $cy-primary-dark;
+    }
+}
+
+.o_cy_btn_badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.o_cy_btn--soft .o_cy_btn_badge {
+    background: $cy-card;
+}
+
+// ---------------------------------------------------------------- Side panel
+
+.o_cy_side_card {
+    padding: 16px 18px;
+
+    .o_cy_card_title {
+        margin-bottom: 12px;
+    }
+}
+
+.o_cy_alert {
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid;
+}
+
+.o_cy_alert_title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.o_cy_alert_text {
+    font-size: 13px;
+    line-height: 1.45;
+    color: $cy-text;
+}
+
+.o_cy_alert--primary {
+    background: $cy-primary-soft;
+    border-color: lighten($cy-primary, 32%);
+    .o_cy_alert_title { color: $cy-primary; }
+}
+
+.o_cy_alert--orange {
+    background: $cy-orange-soft;
+    border-color: lighten($cy-orange, 25%);
+    .o_cy_alert_title { color: $cy-orange-dark; }
+}
+
+.o_cy_alert--green {
+    background: $cy-green-soft;
+    border-color: lighten($cy-green, 40%);
+    .o_cy_alert_title { color: $cy-green; }
+}
+
+.o_cy_rows {
+    display: flex;
+    flex-direction: column;
+}
+
+.o_cy_row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 0;
+    font-size: 13px;
+    border-bottom: 1px solid $cy-border;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    span {
+        color: $cy-muted;
+    }
+}
+
+.o_cy_empty {
+    font-size: 13px;
+    color: $cy-muted;
+}
+
+.o_cy_plate_group + .o_cy_plate_group {
+    margin-top: 14px;
+}
+
+.o_cy_plate_group_head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: $cy-text;
+}
+
+.o_cy_plate_group_count {
+    font-weight: 500;
+    color: $cy-muted;
+}
+
+.o_cy_plate_row {
+    display: grid;
+    grid-template-columns: 10px auto 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+
+    &:hover {
+        background: $cy-bg;
+    }
+
+    &.is-selected {
+        background: $cy-primary-soft;
+    }
+}
+
+.o_cy_plate_row_dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    border: 1px solid $cy-steel-border;
+    background: $cy-steel;
+}
+
+.o_cy_plate_row_id {
+    font-weight: 700;
+}
+
+.o_cy_plate_row_meta {
+    color: $cy-muted;
+}
+
+.o_cy_plate_row_status {
+    font-size: 12px;
+    color: $cy-muted;
+}
+
+.o_cy_plate_row--pick .o_cy_plate_row_dot {
+    background: $cy-green;
+    border-color: darken($cy-green, 8%);
+}
+
+.o_cy_plate_row--pick .o_cy_plate_row_status {
+    color: $cy-green;
+    font-weight: 600;
+}
+
+.o_cy_plate_row--relocate {
+    .o_cy_plate_row_dot {
+        background: $cy-primary-soft;
+        border: 1px dashed $cy-primary;
+    }
+
+    .o_cy_plate_row_status {
+        color: $cy-primary;
+        font-weight: 600;
+    }
+}
+
+.o_cy_plate_row--done .o_cy_plate_row_dot {
+    background: $cy-green;
+    border-color: $cy-green;
+}
+
+.o_cy_legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.o_cy_legend_item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.o_cy_swatch {
+    width: 36px;
+    height: 16px;
+    border-radius: 4px;
+    border: 2px solid $cy-steel-border;
+    background: linear-gradient(180deg, $cy-steel-light, $cy-steel);
+}
+
+.o_cy_swatch--pick {
+    border-color: $cy-orange-dark;
+    background: $cy-orange;
+}
+
+.o_cy_swatch--relocate {
+    border-style: dashed;
+    border-color: $cy-primary;
+}
+
+.o_cy_swatch--done {
+    border-color: $cy-green;
+    background: $cy-green-light;
+}
+
+// ---------------------------------------------------------------- Responsive
+
+@media (max-width: 1200px) {
+    .o_cy_body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .o_cy_side {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .o_cy_kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .o_cy_columns {
+        gap: 12px;
+    }
+
+    .o_cy_plate {
+        font-size: 14px;
+        padding: 0 8px;
+    }
+
+    .o_cy_plate_meta,
+    .o_cy_plate_tag {
+        display: none;
+    }
+
+    .o_cy_column_name {
+        font-size: 16px;
+    }
+
+    .o_cy_hook_plate {
+        width: 120px;
+    }
+}

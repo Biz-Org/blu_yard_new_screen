@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="crane_yard_operator.PipePicking">
+        <div class="o_action o_cy h-100">
+            <div class="o_cy_layout">
+            <CraneYardNav active="navKey" disabled="state.busy"/>
+            <div class="o_cy_content">
+            <div class="o_cy_page">
+
+                <header class="o_cy_header o_cy_header--pipe">
+                    <div>
+                        <div class="o_cy_breadcrumb">RM Yard <span class="mx-1">/</span> <span class="o_cy_breadcrumb_active">Crane Operator</span></div>
+                        <h1 class="o_cy_title" t-esc="screenTitle"/>
+                    </div>
+                    <div class="o_cy_header_right">
+                        <div class="o_cy_route">
+                            <div class="o_cy_route_chip">
+                                <i class="fa fa-database"/>
+                                <div>
+                                    <div class="o_cy_route_label">Source</div>
+                                    <div class="o_cy_route_value">Pipe Pyramid</div>
+                                </div>
+                            </div>
+                            <i class="fa fa-long-arrow-right o_cy_route_arrow"/>
+                            <div t-if="isUnstackScreen" class="o_cy_route_chip o_cy_route_chip--final">
+                                <i class="fa fa-arrow-up"/>
+                                <div>
+                                    <div class="o_cy_route_label">Upper Pipes To</div>
+                                    <div class="o_cy_route_value">Temporary Stack</div>
+                                </div>
+                            </div>
+                            <div t-elif="isRestoreScreen" class="o_cy_route_chip o_cy_route_chip--final">
+                                <i class="fa fa-reply"/>
+                                <div>
+                                    <div class="o_cy_route_label">Return To</div>
+                                    <div class="o_cy_route_value">Original Pyramid Slots</div>
+                                </div>
+                            </div>
+                            <div t-else="" class="o_cy_route_chip o_cy_route_chip--final">
+                                <i class="fa fa-truck"/>
+                                <div>
+                                    <div class="o_cy_route_label">Assigned Truck</div>
+                                    <div class="o_cy_route_value" t-esc="state.order.truck"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top-right Sales Order / Bin information panel -->
+                        <aside class="o_cy_order_panel" t-attf-aria-label="Sales Order {{orderPanel.soNumber}}">
+                            <div class="o_cy_order_panel_title">
+                                <i class="fa fa-file-text-o"/> Order Info
+                            </div>
+                            <div class="o_cy_order_panel_row">
+                                <span class="o_cy_order_panel_key">SO No.</span>
+                                <span class="o_cy_order_panel_val" t-esc="orderPanel.soNumber"/>
+                            </div>
+                            <div class="o_cy_order_panel_row">
+                                <span class="o_cy_order_panel_key">Bin Location</span>
+                                <span class="o_cy_order_panel_val" t-esc="orderPanel.binLocation"/>
+                            </div>
+                            <div class="o_cy_order_panel_row">
+                                <span class="o_cy_order_panel_key">Available Pipes</span>
+                                <span class="o_cy_order_panel_val o_cy_order_panel_val--count" t-esc="orderPanel.availablePipes"/>
+                            </div>
+                            <div class="o_cy_order_panel_row o_cy_order_panel_row--sub">
+                                <span class="o_cy_order_panel_key">Remaining</span>
+                                <span class="o_cy_order_panel_val" t-esc="orderPanel.remaining"/>
+                            </div>
+                            <div class="o_cy_order_panel_row o_cy_order_panel_row--sub">
+                                <span class="o_cy_order_panel_key">Loaded</span>
+                                <span class="o_cy_order_panel_val"><t t-esc="orderPanel.loaded"/> / <t t-esc="orderPanel.availablePipes"/></span>
+                            </div>
+                            <div class="o_cy_order_panel_locs">
+                                <div class="o_cy_order_panel_locs_title">Required Pipe Locations:</div>
+                                <ol class="o_cy_order_panel_list">
+                                    <li t-foreach="orderPanel.requiredLocations" t-as="loc" t-key="loc.id"
+                                        t-attf-class="o_cy_order_panel_loc o_cy_order_panel_loc--{{loc.status}}">
+                                        <span class="o_cy_order_panel_loc_path" t-esc="loc.path"/>
+                                        <span class="o_cy_order_panel_loc_id" t-esc="loc.id"/>
+                                    </li>
+                                </ol>
+                            </div>
+                        </aside>
+                    </div>
+                </header>
+
+                <div class="o_cy_body">
+                    <div class="o_cy_main">
+
+                        <div class="o_cy_kpis">
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">Pipes to Pick</span>
+                                    <span class="o_cy_kpi_icon o_cy_kpi_icon--green"><i class="fa fa-circle-o"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value"><t t-esc="orderPanel.availablePipes"/> <small>pipes</small></div>
+                                <div class="o_cy_kpi_sub">SO <t t-esc="orderPanel.soNumber"/></div>
+                            </div>
+                            <t t-if="isUnstackScreen">
+                                <div class="o_cy_card o_cy_kpi">
+                                    <div class="o_cy_kpi_head">
+                                        <span class="o_cy_kpi_label">Unstack First</span>
+                                        <span class="o_cy_kpi_icon o_cy_kpi_icon--red"><i class="fa fa-arrow-up"/></span>
+                                    </div>
+                                    <div class="o_cy_kpi_value"><t t-esc="blockers.length"/> <small>pipes</small></div>
+                                    <div class="o_cy_kpi_sub">Stacked above green pipes</div>
+                                </div>
+                                <div class="o_cy_card o_cy_kpi">
+                                    <div class="o_cy_kpi_head">
+                                        <span class="o_cy_kpi_label">Unstacked</span>
+                                        <span class="o_cy_kpi_icon o_cy_kpi_icon--primary"><i class="fa fa-check"/></span>
+                                    </div>
+                                    <div class="o_cy_kpi_value"><t t-esc="state.rack.length"/> <small>pipes</small></div>
+                                    <div class="o_cy_kpi_sub">In the Temporary Stack</div>
+                                </div>
+                            </t>
+                            <t t-elif="isRestoreScreen">
+                                <div class="o_cy_card o_cy_kpi">
+                                    <div class="o_cy_kpi_head">
+                                        <span class="o_cy_kpi_label">To Return</span>
+                                        <span class="o_cy_kpi_icon o_cy_kpi_icon--primary"><i class="fa fa-reply"/></span>
+                                    </div>
+                                    <div class="o_cy_kpi_value"><t t-esc="temporaryRackPipes.length"/> <small>pipes</small></div>
+                                    <div class="o_cy_kpi_sub">On Temporary Stack</div>
+                                </div>
+                                <div class="o_cy_card o_cy_kpi">
+                                    <div class="o_cy_kpi_head">
+                                        <span class="o_cy_kpi_label">Ready Now</span>
+                                        <span class="o_cy_kpi_icon o_cy_kpi_icon--green"><i class="fa fa-check"/></span>
+                                    </div>
+                                    <div class="o_cy_kpi_value"><t t-esc="nextReturnPipe ? 1 : 0"/> <small>pipe</small></div>
+                                    <div class="o_cy_kpi_sub" t-esc="nextReturnPipe ? nextReturnPipe.id : 'Waiting'"/>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="o_cy_card o_cy_kpi">
+                                    <div class="o_cy_kpi_head">
+                                        <span class="o_cy_kpi_label">Remaining</span>
+                                        <span class="o_cy_kpi_icon o_cy_kpi_icon--primary"><i class="fa fa-clock-o"/></span>
+                                    </div>
+                                    <div class="o_cy_kpi_value"><t t-esc="orderPanel.remaining"/> <small>pipes</small></div>
+                                    <div class="o_cy_kpi_sub">Still to load on truck</div>
+                                </div>
+                                <div class="o_cy_card o_cy_kpi">
+                                    <div class="o_cy_kpi_head">
+                                        <span class="o_cy_kpi_label">In Truck</span>
+                                        <span class="o_cy_kpi_icon o_cy_kpi_icon--blue"><i class="fa fa-truck"/></span>
+                                    </div>
+                                    <div class="o_cy_kpi_value"><t t-esc="orderPanel.loaded"/> / <t t-esc="orderPanel.availablePipes"/></div>
+                                    <div class="o_cy_progress"><div class="o_cy_progress_bar o_cy_progress_bar--blue" t-attf-style="width: {{progressPercent}}%"/></div>
+                                </div>
+                            </t>
+                            <div class="o_cy_card o_cy_kpi">
+                                <div class="o_cy_kpi_head">
+                                    <span class="o_cy_kpi_label">Crane Status</span>
+                                    <span t-attf-class="o_cy_kpi_icon o_cy_kpi_icon--{{craneStatus.tone}}"><i class="fa fa-arrows-v"/></span>
+                                </div>
+                                <div class="o_cy_kpi_value" t-esc="craneStatus.title"/>
+                                <div class="o_cy_kpi_sub" t-esc="craneStatus.text"/>
+                            </div>
+                        </div>
+
+                        <section class="o_cy_card o_cy_yard_card">
+                            <div t-attf-class="o_cy_alert o_cy_alert--{{status.tone}} o_cy_pipe_status">
+                                <div class="o_cy_alert_title">
+                                    <i t-attf-class="fa {{status.icon}}"/>
+                                    <t t-esc="status.title"/>
+                                </div>
+                                <div class="o_cy_alert_text" t-esc="status.text"/>
+                            </div>
+
+                            <div class="o_cy_steps">
+                                <div t-foreach="steps" t-as="step" t-key="step.id"
+                                     t-attf-class="o_cy_step o_cy_step--{{step.state}}">
+                                    <span class="o_cy_step_num">
+                                        <i t-if="step.state === 'done'" class="fa fa-check"/>
+                                        <t t-else="" t-esc="step.id"/>
+                                    </span>
+                                    <span class="o_cy_step_label" t-esc="step.label"/>
+                                </div>
+                            </div>
+
+                            <div class="o_cy_yard">
+                                <div class="o_cy_gantry">
+                                    <div class="o_cy_rail"/>
+                                    <div class="o_cy_trolley" t-attf-style="left: {{state.crane.x}}%">
+                                        <div class="o_cy_trolley_body"><i class="fa fa-arrows-v"/> CRANE</div>
+                                        <div class="o_cy_cable"/>
+                                        <div t-if="state.crane.load" t-att-class="hookClass"
+                                             t-att-title="state.pipes[state.crane.load].id + ' · ' + (state.pipes[state.crane.load].soNumber || '')">
+                                            <span class="o_cy_pipe_body">
+                                                <span class="o_cy_pipe_label" t-esc="state.pipes[state.crane.load].label"/>
+                                            </span>
+                                        </div>
+                                        <div t-else="" class="o_cy_hook"/>
+                                    </div>
+                                </div>
+
+                                <div class="o_cy_pipe_yard">
+                                    <div class="o_cy_pipe_area">
+                                        <div class="o_cy_column_head">
+                                            <span class="o_cy_role o_cy_role--source">Source</span>
+                                            <span class="o_cy_column_name">Pipe Pyramid</span>
+                                            <span class="o_cy_column_count"><t t-esc="pyramidPipes.length"/> pipes</span>
+                                        </div>
+                                        <div class="o_cy_pipe_pyramid o_cy_pipe_pyramid--floors">
+                                            <div t-foreach="floorRows" t-as="floor" t-key="floor.row" class="o_cy_pipe_floor">
+                                                <span class="o_cy_pipe_floor_label" t-esc="floor.label"/>
+                                                <div class="o_cy_pipe_floor_row">
+                                                    <!-- Fixed slots keep pyramid geometry stable when pipes are picked/moved -->
+                                                    <div t-foreach="floor.slots" t-as="slot" t-key="slot.key" class="o_cy_pipe_slot">
+                                                        <button t-if="slot.pipe" type="button"
+                                                                t-att-class="pipeClass(slot.pipe)"
+                                                                t-att-title="pipeTooltip(slot.pipe)"
+                                                                t-on-click="() => this.onPipeClick(slot.pipe)">
+                                                            <span class="o_cy_pipe_body">
+                                                                <span class="o_cy_pipe_label" t-esc="slot.pipe.label"/>
+                                                            </span>
+                                                            <span class="o_cy_pipe_so" t-esc="slot.pipe.soNumber"/>
+                                                            <span t-if="showTruckBadge(slot.pipe)" class="o_cy_pipe_badge o_cy_pipe_badge--truck">
+                                                                <i class="fa fa-truck"/>
+                                                            </span>
+                                                            <span t-elif="pipeStatus(slot.pipe) === 'unstack'" class="o_cy_pipe_badge o_cy_pipe_badge--unstack">
+                                                                <i class="fa fa-arrow-up"/>
+                                                            </span>
+                                                        </button>
+                                                        <!-- Invisible spacer: keeps geometry after pick/return, no empty-circle UI -->
+                                                        <div t-else="" class="o_cy_pipe o_cy_pipe--empty" aria-hidden="true">
+                                                            <span class="o_cy_pipe_body o_cy_pipe_body--empty"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div t-if="!pyramidPipes.length" class="o_cy_empty">Pyramid empty</div>
+                                        </div>
+                                        <div class="o_cy_ground"/>
+                                    </div>
+
+                                    <div t-if="isUnstackScreen or isRestoreScreen" class="o_cy_pipe_dest">
+                                        <div class="o_cy_column_head">
+                                            <span class="o_cy_role o_cy_role--temporary">Temporary</span>
+                                            <span class="o_cy_column_name">Temporary Stack</span>
+                                            <span class="o_cy_column_count"><t t-esc="state.rack.length"/> pipes</span>
+                                        </div>
+                                        <div class="o_cy_pipe_rack">
+                                            <div t-foreach="rackPipes" t-as="pipe" t-key="pipe.id"
+                                                 t-attf-class="o_cy_pipe o_cy_pipe--mini o_cy_pipe--unstacked {{pipe.id === state.landedId ? 'is-landed' : ''}}"
+                                                 t-att-title="'Temp · home R' + (pipe.homeRow + 1) + '/P' + (pipe.homeCol + 1) + ' · ' + pipe.id">
+                                                <span class="o_cy_pipe_body">
+                                                    <span class="o_cy_pipe_label" t-esc="pipe.label"/>
+                                                </span>
+                                                <span class="o_cy_pipe_so" t-esc="pipe.soNumber"/>
+                                            </div>
+                                            <div t-if="!state.rack.length" class="o_cy_empty">
+                                                <t t-esc="isRestoreScreen ? 'No temporary pipes' : 'Upper pipes go here'"/>
+                                            </div>
+                                        </div>
+                                        <div class="o_cy_ground"/>
+                                    </div>
+
+                                    <div t-elif="isDropScreen" class="o_cy_pipe_dest">
+                                        <div class="o_cy_column_head">
+                                            <span class="o_cy_role o_cy_role--final">Truck Loading</span>
+                                            <span class="o_cy_column_name"><i class="fa fa-truck"/> <t t-esc="state.order.truck"/></span>
+                                            <span class="o_cy_column_count"><t t-esc="orderPanel.loaded"/> / <t t-esc="orderPanel.availablePipes"/> loaded</span>
+                                        </div>
+                                        <div class="o_cy_truck">
+                                            <div class="o_cy_truck_body">
+                                                <div class="o_cy_truck_bed">
+                                                    <div class="o_cy_pipe_load">
+                                                        <div t-foreach="truckPipes" t-as="pipe" t-key="pipe.id"
+                                                             t-attf-class="o_cy_pipe o_cy_pipe--mini o_cy_pipe--done {{pipe.id === state.landedId ? 'is-landed' : ''}}"
+                                                             t-att-title="pipe.id + ' · loaded onto truck'">
+                                                            <span class="o_cy_pipe_body">
+                                                                <span class="o_cy_pipe_label" t-esc="pipe.label"/>
+                                                            </span>
+                                                            <span class="o_cy_pipe_so" t-esc="pipe.soNumber"/>
+                                                        </div>
+                                                        <div t-if="!state.truck.length" class="o_cy_pipe_drop_hint">
+                                                            <i class="fa fa-long-arrow-down"/> Drop here
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="o_cy_truck_cab"><div class="o_cy_truck_window"/></div>
+                                            </div>
+                                            <div class="o_cy_truck_chassis">
+                                                <span class="o_cy_wheel"/>
+                                                <span class="o_cy_wheel"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="o_cy_actions">
+                            <button type="button" class="o_cy_btn o_cy_btn--outline"
+                                    t-att-disabled="state.busy" t-on-click="reset">
+                                <i class="fa fa-refresh"/> Reset
+                            </button>
+                            <t t-if="isUnstackScreen">
+                                <button type="button"
+                                        t-attf-class="o_cy_btn {{removableBlockers.length ? 'o_cy_btn--primary' : 'o_cy_btn--soft'}}"
+                                        t-att-disabled="state.busy or !removableBlockers.length"
+                                        t-on-click="unstackUpperPipes">
+                                    <i class="fa fa-arrow-up"/> Unstack Upper Pipes
+                                    <span t-if="blockers.length" class="o_cy_btn_badge" t-esc="blockers.length"/>
+                                </button>
+                                <button type="button"
+                                        t-attf-class="o_cy_btn {{nextPick and !blockers.length ? 'o_cy_btn--primary' : 'o_cy_btn--soft'}}"
+                                        t-att-disabled="state.busy or !nextPick"
+                                        t-on-click="openDropScreen">
+                                    Next: Pick &amp; Drop <i class="fa fa-long-arrow-right"/>
+                                </button>
+                            </t>
+                            <t t-elif="isRestoreScreen">
+                                <button type="button" class="o_cy_btn o_cy_btn--soft"
+                                        t-att-disabled="state.busy"
+                                        t-on-click="openDropScreen">
+                                    <i class="fa fa-long-arrow-left"/> Back: Drop to Truck
+                                </button>
+                                <button type="button"
+                                        t-attf-class="o_cy_btn {{nextReturnPipe ? 'o_cy_btn--primary' : 'o_cy_btn--soft'}}"
+                                        t-att-disabled="state.busy or !nextReturnPipe"
+                                        t-on-click="returnTemporaryPipes">
+                                    <i class="fa fa-reply"/> Return Temporary Pipes
+                                    <span t-if="temporaryRackPipes.length" class="o_cy_btn_badge" t-esc="temporaryRackPipes.length"/>
+                                </button>
+                            </t>
+                            <t t-else="">
+                                <button t-if="!nextPick and !allDropped" type="button"
+                                        class="o_cy_btn o_cy_btn--soft"
+                                        t-att-disabled="state.busy"
+                                        t-on-click="openUnstackScreen">
+                                    <i class="fa fa-long-arrow-left"/> Back: Unstack Upper Pipes
+                                </button>
+                                <button type="button"
+                                        t-attf-class="o_cy_btn {{nextPick ? 'o_cy_btn--primary' : 'o_cy_btn--soft'}}"
+                                        t-att-disabled="state.busy or !nextPick"
+                                        t-on-click="pickNext">
+                                    <i class="fa fa-truck"/> Pick &amp; Drop to Truck
+                                    <span t-if="nextPick" class="o_cy_btn_badge" t-esc="nextPick.id"/>
+                                </button>
+                                <button t-if="allDropped and temporaryRackPipes.length" type="button"
+                                        class="o_cy_btn o_cy_btn--primary"
+                                        t-att-disabled="state.busy"
+                                        t-on-click="openRestoreScreen">
+                                    Next: Return Temporary Pipes <i class="fa fa-long-arrow-right"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <aside class="o_cy_side">
+                        <section class="o_cy_card o_cy_side_card">
+                            <h2 class="o_cy_card_title">Pick List</h2>
+                            <div class="o_cy_pick_summary">
+                                <div class="o_cy_pick_count">
+                                    <strong t-esc="orderPanel.availablePipes"/> pipes required
+                                </div>
+                                <div class="o_cy_pick_meta">
+                                    <span><i class="fa fa-file-text-o"/> SO <t t-esc="orderPanel.soNumber"/></span>
+                                    <span><i class="fa fa-map-marker"/> Bin <t t-esc="orderPanel.binLocation"/></span>
+                                    <span><i class="fa fa-truck"/> <t t-esc="state.order.truck"/></span>
+                                </div>
+                            </div>
+                            <div t-if="!selectedList.length" class="o_cy_empty">No pipes on the pick list.</div>
+                            <div t-foreach="selectedList" t-as="item" t-key="item.id"
+                                 t-attf-class="o_cy_plate_row o_cy_pipe_row o_cy_pipe_row--{{item.status}}">
+                                <span class="o_cy_plate_row_dot"/>
+                                <span class="o_cy_plate_row_id" t-esc="item.id"/>
+                                <span class="o_cy_plate_row_meta">
+                                    <t t-esc="item.location"/>
+                                    <t t-if="item.soNumber"> · <t t-esc="item.soNumber"/></t>
+                                </span>
+                                <span class="o_cy_plate_row_status" t-esc="item.label"/>
+                            </div>
+                            <div class="o_cy_pick_hint">Green pipes = required for this SO. Return Temporary Pipes fills empty slots from the bottom row upward.</div>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+            </div>
+            </div>
+
+            <!-- Loading Complete confirmation (only when all required pipes are on the truck) -->
+            <div t-if="state.showLoadingComplete" class="o_cy_modal_backdrop" role="dialog" aria-modal="true">
+                <div class="o_cy_modal o_cy_modal--loading">
+                    <div class="o_cy_modal_icon">
+                        <i class="fa fa-check-circle"/>
+                    </div>
+                    <h2 class="o_cy_modal_title">Loading Complete!</h2>
+                    <div class="o_cy_modal_meta">
+                        <div class="o_cy_modal_meta_row">
+                            <span>Sales Order:</span>
+                            <strong t-esc="orderPanel.soNumber"/>
+                        </div>
+                        <div class="o_cy_modal_meta_row">
+                            <span>Total Pipes Required:</span>
+                            <strong t-esc="orderPanel.availablePipes"/>
+                        </div>
+                        <div class="o_cy_modal_meta_row">
+                            <span>Total Pipes Loaded:</span>
+                            <strong t-esc="orderPanel.loaded"/>
+                        </div>
+                    </div>
+                    <p class="o_cy_modal_msg">
+                        All required pipes have been successfully loaded onto the truck.
+                    </p>
+                    <button type="button" class="o_cy_btn o_cy_btn--primary o_cy_modal_confirm"
+                            t-on-click="confirmLoadingComplete">
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

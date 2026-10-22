@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="crane_yard_operator.CraneYardNav">
+        <nav class="o_cy_nav">
+            <div class="o_cy_nav_brand">
+                <span class="o_cy_nav_logo"><i class="fa fa-bolt"/></span>
+                <div class="o_cy_nav_text">
+                    <div class="o_cy_nav_brand_name">Crane Yard</div>
+                    <div class="o_cy_nav_brand_sub">Operator Suite</div>
+                </div>
+            </div>
+            <div t-foreach="groups" t-as="group" t-key="group.key" class="o_cy_nav_group">
+                <div class="o_cy_nav_group_title o_cy_nav_text" t-esc="group.title"/>
+                <button t-foreach="group.items" t-as="item" t-key="item.key" type="button"
+                        t-attf-class="o_cy_nav_item {{item.key === props.active ? 'is-active' : ''}}"
+                        t-att-disabled="props.disabled and item.key !== props.active"
+                        t-att-title="item.label"
+                        t-on-click="() => this.open(item)">
+                    <i t-attf-class="fa {{item.icon}}"/>
+                    <span class="o_cy_nav_text" t-esc="item.label"/>
+                </button>
+            </div>
+        </nav>
+    </t>
+
+</templates>

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="crane_yard_operator.PutAway">
+        <div class="o_action o_cy h-100">
+            <div class="o_cy_layout">
+                <CraneYardNav active="navKey" disabled="state.busy"/>
+                <div class="o_cy_content">
+                    <div t-attf-class="o_pw_page {{isPipe ? 'o_pw_page--pipe' : 'o_pw_page--plate'}}">
+
+                        <header class="o_pw_header">
+                            <div>
+                                <div class="o_pw_breadcrumb">Yard <span class="mx-1">/</span> <span class="o_pw_breadcrumb_active" t-esc="screenTitle"/></div>
+                                <h1 class="o_pw_title" t-esc="screenTitle"/>
+                                <div class="o_pw_subtitle">
+                                    Corner badge shows the allocated bin. The crane throws the selected item into that bin (or Temporary Zone).
+                                </div>
+                            </div>
+                        </header>
+
+                        <div class="o_pw_kpis">
+                            <div class="o_pw_card o_pw_kpi">
+                                <div class="o_pw_kpi_head">
+                                    <span class="o_pw_kpi_label" t-esc="totalLabel"/>
+                                    <span class="o_pw_kpi_icon"><i class="fa fa-list"/></span>
+                                </div>
+                                <div class="o_pw_kpi_value" t-esc="totalCount"/>
+                            </div>
+                            <div class="o_pw_card o_pw_kpi">
+                                <div class="o_pw_kpi_head">
+                                    <span class="o_pw_kpi_label">Items Pending</span>
+                                    <span class="o_pw_kpi_icon o_pw_kpi_icon--orange"><i class="fa fa-clock-o"/></span>
+                                </div>
+                                <div class="o_pw_kpi_value o_pw_kpi_value--orange" t-esc="pendingCount"/>
+                            </div>
+                            <div class="o_pw_card o_pw_kpi">
+                                <div class="o_pw_kpi_head">
+                                    <span class="o_pw_kpi_label">Placed in Yard</span>
+                                    <span class="o_pw_kpi_icon o_pw_kpi_icon--green"><i class="fa fa-check"/></span>
+                                </div>
+                                <div class="o_pw_kpi_value o_pw_kpi_value--green" t-esc="placedCount"/>
+                            </div>
+                            <div class="o_pw_card o_pw_kpi">
+                                <div class="o_pw_kpi_head">
+                                    <span class="o_pw_kpi_label">Crane</span>
+                                    <span t-attf-class="o_pw_kpi_icon o_pw_kpi_icon--{{craneStatus.tone}}"><i class="fa fa-arrows-v"/></span>
+                                </div>
+                                <div class="o_pw_kpi_value o_pw_kpi_value--crane" t-esc="craneStatus.title"/>
+                                <div class="o_pw_kpi_sub" t-esc="craneStatus.text"/>
+                            </div>
+                        </div>
+
+                        <div class="o_pw_legend">
+                            <span class="o_pw_legend_title">Bin colours</span>
+                            <span t-foreach="binLegend" t-as="bin" t-key="bin.code" class="o_pw_legend_item"
+                                  t-att-style="'--pw-bin: ' + bin.color">
+                                <span class="o_pw_legend_swatch"/>
+                                <span t-esc="bin.label"/>
+                            </span>
+                            <span class="o_pw_legend_item o_pw_legend_item--temp">
+                                <span class="o_pw_legend_swatch"/>
+                                <span>Temporary Zone</span>
+                            </span>
+                        </div>
+
+                        <div class="o_pw_body">
+                            <div class="o_pw_main">
+                                <section class="o_pw_card o_pw_yard_card">
+                                    <div class="o_pw_card_head">
+                                        <div>
+                                            <h2 class="o_pw_card_title">Yard View</h2>
+                                            <div class="o_pw_card_sub">
+                                                Select an item — corner shows allocated bin. Confirm Put Away and the crane throws it into that bin.
+                                            </div>
+                                        </div>
+                                        <div t-if="selectedDetail" class="o_pw_selected_chip" t-att-style="selectedDetail.style">
+                                            <strong t-esc="selectedDetail.id"/>
+                                            <span t-esc="selectedDetail.size"/>
+                                            <span class="o_pw_selected_bin" t-esc="selectedDetail.binLabel"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="o_pw_yard o_pw_yard--pipe">
+                                        <div class="o_pw_gantry">
+                                            <div class="o_pw_rail"/>
+                                            <div class="o_pw_trolley" t-attf-style="left: {{state.crane.x}}%">
+                                                <div class="o_pw_trolley_body"><i class="fa fa-arrows-v"/> CRANE</div>
+                                                <div class="o_pw_cable"/>
+                                                <div t-if="craneLoadItem"
+                                                     t-attf-class="o_pw_hook_load {{isPipe ? 'o_pw_hook_load--round' : ''}}"
+                                                     t-att-style="pipeStyle(craneLoadItem)"
+                                                     t-att-title="craneLoadItem.id + ' → Bin ' + craneLoadItem.targetBin">
+                                                    <span class="o_pw_hook_id" t-esc="craneLoadItem.id"/>
+                                                    <span class="o_pw_bin_badge o_pw_bin_badge--hook" t-esc="binBadge(craneLoadItem)"/>
+                                                </div>
+                                                <div t-else="" class="o_pw_hook"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="o_pw_pyramid_panel">
+                                            <div class="o_pw_panel_label">Waiting for put-away</div>
+                                            <div t-if="isPipe" class="o_pw_pyramid o_pw_pyramid--fixed"
+                                                 t-attf-style="height: {{pyramidHeight}}px;">
+                                                <!-- Absolute slots: putting one pipe away never moves the others -->
+                                                <div t-foreach="pyramidSlots" t-as="slot" t-key="slot.key"
+                                                     class="o_pw_pipe_slot o_pw_pipe_slot--fixed"
+                                                     t-att-style="slot.style">
+                                                    <button t-if="slot.item" type="button"
+                                                            t-att-class="pipeClass(slot.item, 'pyramid')"
+                                                            t-att-style="pipeStyle(slot.item)"
+                                                            t-att-disabled="state.busy"
+                                                            t-att-title="slot.item.id + ' · ' + slot.item.size + ' · Allocated Bin ' + slot.item.targetBin"
+                                                            t-on-click="() => this.selectItem(slot.item)">
+                                                        <span class="o_pw_pipe_body">
+                                                            <span class="o_pw_pipe_id" t-esc="slot.item.id"/>
+                                                        </span>
+                                                        <span class="o_pw_pipe_size" t-esc="slot.item.size"/>
+                                                        <span class="o_pw_bin_badge" t-esc="binBadge(slot.item)"/>
+                                                    </button>
+                                                </div>
+                                                <div t-if="!pendingItems.length" class="o_pw_empty o_pw_empty--overlay">All pipes put away</div>
+                                            </div>
+                                            <div t-else="" class="o_pw_plate_wait">
+                                                <button t-foreach="pendingItems" t-as="item" t-key="item.id" type="button"
+                                                        t-att-class="plateClass(item, 'wait')"
+                                                        t-att-style="pipeStyle(item)"
+                                                        t-att-disabled="state.busy"
+                                                        t-att-title="item.id + ' · ' + item.size + ' · Allocated Bin ' + item.targetBin"
+                                                        t-on-click="() => this.selectItem(item)">
+                                                    <span class="o_pw_bin_badge" t-esc="binBadge(item)"/>
+                                                    <span class="o_pw_plate_main">
+                                                        <span t-esc="item.id"/> · <span t-esc="item.size"/>
+                                                    </span>
+                                                </button>
+                                                <div t-if="!pendingItems.length" class="o_pw_empty">No pending plates</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="o_pw_bins_panel">
+                                            <div class="o_pw_bins_grid">
+                                                <div t-foreach="bins" t-as="bin" t-key="bin.code"
+                                                     t-attf-class="o_pw_bin_card {{bin.isTarget ? 'is-target' : ''}} {{bin.isLanding ? 'is-landing' : ''}}"
+                                                     t-att-style="bin.style">
+                                                    <div class="o_pw_bin_head">
+                                                        <span class="o_pw_bin_swatch"/>
+                                                        <span class="o_pw_bin_name" t-esc="bin.label"/>
+                                                        <span class="o_pw_bin_count"><t t-esc="bin.items.length"/> stored</span>
+                                                    </div>
+                                                    <button type="button" class="o_pw_bin_rack"
+                                                            t-att-disabled="state.busy or !bin.isTarget"
+                                                            t-att-title="bin.isTarget ? 'Crane will throw selected item into ' + bin.label : 'Not the destination for the selected item'"
+                                                            t-on-click="() => this.placeInBin(bin.code)">
+                                                        <div t-foreach="bin.items" t-as="item" t-key="item.id"
+                                                             t-att-class="itemClass(item, 'rack')"
+                                                             t-att-style="pipeStyle(item)">
+                                                            <t t-if="isPipe">
+                                                                <span class="o_pw_pipe_body">
+                                                                    <span class="o_pw_pipe_id" t-esc="item.id"/>
+                                                                </span>
+                                                                <span class="o_pw_pipe_size" t-esc="item.size"/>
+                                                                <span class="o_pw_bin_badge" t-esc="binBadge(item)"/>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <span class="o_pw_bin_badge" t-esc="binBadge(item)"/>
+                                                                <span class="o_pw_pipe_id" t-esc="item.id"/>
+                                                            </t>
+                                                        </div>
+                                                        <div t-if="!bin.items.length" class="o_pw_bin_empty">Empty</div>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="o_pw_temp_zone">
+                                                <div class="o_pw_bin_head">
+                                                    <span class="o_pw_bin_swatch o_pw_bin_swatch--temp"/>
+                                                    <span class="o_pw_bin_name">Temporary Zone</span>
+                                                    <span class="o_pw_bin_count"><t t-esc="temporaryCount"/> held</span>
+                                                </div>
+                                                <div class="o_pw_temp_rack">
+                                                    <div t-foreach="temporaryItems" t-as="item" t-key="item.id"
+                                                         t-att-class="itemClass(item, 'rack')"
+                                                         t-on-click="() => this.selectItem(item)">
+                                                        <t t-if="isPipe">
+                                                            <span class="o_pw_pipe_body">
+                                                                <span class="o_pw_pipe_id" t-esc="item.id"/>
+                                                            </span>
+                                                            <span class="o_pw_pipe_size" t-esc="item.size"/>
+                                                            <span class="o_pw_bin_badge o_pw_bin_badge--temp" t-esc="binBadge(item)"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span class="o_pw_bin_badge o_pw_bin_badge--temp" t-esc="binBadge(item)"/>
+                                                            <span class="o_pw_pipe_id" t-esc="item.id"/>
+                                                        </t>
+                                                    </div>
+                                                    <div t-if="!temporaryItems.length" class="o_pw_bin_empty">No items in temporary zone</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="o_pw_actions">
+                                        <button type="button" class="o_pw_btn o_pw_btn--outline"
+                                                t-att-disabled="state.busy" t-on-click="reset">Reset</button>
+                                        <button type="button" class="o_pw_btn o_pw_btn--soft"
+                                                t-att-disabled="state.busy or !selected or selected.status !== 'pending'"
+                                                t-on-click="putToTemporary">
+                                            <i class="fa fa-archive"/> Put to Temporary Zone
+                                        </button>
+                                        <button type="button" class="o_pw_btn o_pw_btn--primary"
+                                                t-att-disabled="state.busy or !selected or selected.status !== 'pending'"
+                                                t-on-click="confirmPutAway">
+                                            <i class="fa fa-arrows-v"/> Confirm Put Away
+                                            <span t-if="selected and selected.status === 'pending'" class="o_pw_btn_badge" t-esc="selected.targetBin"/>
+                                        </button>
+                                    </div>
+                                </section>
+                            </div>
+
+                            <aside class="o_pw_side">
+                                <section class="o_pw_card o_pw_side_card">
+                                    <h2 class="o_pw_card_title">Put Away Tasks</h2>
+                                    <div class="o_pw_task_list">
+                                        <div t-foreach="taskList" t-as="task" t-key="task.id"
+                                             role="button" tabindex="0"
+                                             t-att-class="taskClass(task)"
+                                             t-att-style="task.style"
+                                             t-on-click="() => this.selectItem(task)">
+                                            <span class="o_pw_task_num" t-esc="task.index"/>
+                                            <div class="o_pw_task_body">
+                                                <div class="o_pw_task_title">
+                                                    <t t-esc="itemNoun"/> <t t-esc="task.id"/>, <t t-esc="task.size"/>
+                                                    <span class="o_pw_bin_badge o_pw_bin_badge--task" t-esc="binBadge(task)"/>
+                                                </div>
+                                                <div class="o_pw_task_meta">
+                                                    <span class="o_pw_task_bin">
+                                                        <span class="o_pw_task_swatch"/>
+                                                        <t t-if="task.status === 'placed'">Location: <t t-esc="task.locationLabel"/></t>
+                                                        <t t-elif="task.status === 'temporary'">Location: Temporary Zone</t>
+                                                        <t t-else="">Allocated: <t t-esc="task.binLabel"/></t>
+                                                    </span>
+                                                    <span t-attf-class="o_pw_task_status o_pw_task_status--{{task.status}}" t-esc="task.statusLabel"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </aside>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

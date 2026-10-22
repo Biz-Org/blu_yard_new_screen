@@ -1,0 +1,1051 @@
+/* Pipe / Plate Put Away — plain CSS so Odoo always loads it */
+
+/* Full-width put-away pages — no centered max-width white gutters */
+.o_action.o_cy .o_pw_page,
+.o_pw_page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 16px 20px 24px;
+    color: #15151f;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #f6f6fa;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+.o_pw_page h1,
+.o_pw_page h2 {
+    margin: 0;
+}
+
+.o_pw_header {
+    margin-bottom: 16px;
+}
+
+.o_pw_breadcrumb {
+    font-size: 12px;
+    color: #6b6b80;
+    margin-bottom: 4px;
+}
+
+.o_pw_breadcrumb_active {
+    color: #5b3fd6;
+    font-weight: 600;
+}
+
+.o_pw_title {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.o_pw_subtitle {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #6b6b80;
+}
+
+.o_pw_card {
+    background: #ffffff;
+    border: 1px solid #e8e8f0;
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(20, 20, 40, 0.04);
+}
+
+.o_pw_kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 12px;
+}
+
+.o_pw_kpi {
+    padding: 14px 16px;
+}
+
+.o_pw_kpi_head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.o_pw_kpi_label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b6b80;
+}
+
+.o_pw_kpi_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #eef2f6;
+    color: #334155;
+}
+
+.o_pw_kpi_icon--green {
+    background: #e8f8ee;
+    color: #16a34a;
+}
+
+.o_pw_kpi_icon--orange {
+    background: #fff6e5;
+    color: #d97706;
+}
+
+.o_pw_kpi_value {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.o_pw_kpi_value--green {
+    color: #16a34a;
+}
+
+.o_pw_kpi_value--orange {
+    color: #d97706;
+}
+
+.o_pw_legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e8e8f0;
+}
+
+.o_pw_legend_title {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b6b80;
+    margin-right: 4px;
+}
+
+.o_pw_legend_item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.o_pw_legend_swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: var(--pw-bin, #94a3b8);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.o_pw_legend_item--temp .o_pw_legend_swatch {
+    background: #cbd5e1;
+    border-style: dashed;
+}
+
+.o_pw_body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 16px;
+    align-items: start;
+}
+
+.o_pw_main {
+    min-width: 0;
+}
+
+.o_pw_yard_card {
+    padding: 16px 18px 18px;
+}
+
+.o_pw_card_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.o_pw_card_title {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.o_pw_card_sub {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #6b6b80;
+}
+
+.o_pw_selected_chip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: #efeafe;
+    border: 1px solid #c4b5fd;
+    font-size: 13px;
+}
+
+.o_pw_selected_bin {
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: var(--pw-bin, #94a3b8);
+    color: var(--pw-bin-text, #1e293b);
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.o_pw_kpi_value--crane {
+    font-size: 18px;
+}
+
+.o_pw_kpi_sub {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #6b6b80;
+}
+
+.o_pw_kpi_icon--primary {
+    background: #efeafe;
+    color: #5b3fd6;
+}
+
+.o_pw_kpi_icon--muted {
+    background: #eef2f6;
+    color: #64748b;
+}
+
+.o_pw_yard--pipe {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.1fr);
+    gap: 18px;
+    align-items: start;
+    position: relative;
+}
+
+/* Crane gantry — throws plates/pipes into allocated bins */
+.o_pw_gantry {
+    grid-column: 1 / -1;
+    position: relative;
+    height: 96px;
+    margin-bottom: 4px;
+}
+
+.o_pw_rail {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    border-radius: 4px;
+    background: repeating-linear-gradient(90deg, #94a3b8 0 18px, #a9b5c6 18px 36px);
+}
+
+.o_pw_trolley {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: left 0.7s ease-in-out;
+    will-change: left;
+    z-index: 4;
+}
+
+.o_pw_trolley_body {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #334155;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.o_pw_cable {
+    width: 3px;
+    height: 28px;
+    background: #334155;
+}
+
+.o_pw_hook {
+    width: 20px;
+    height: 14px;
+    border: 3px solid #334155;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+}
+
+.o_pw_hook_load {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--pw-bin, #94a3b8);
+    color: var(--pw-bin-text, #1e293b);
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+    animation: o_pw_throw_wiggle 0.35s ease-in-out infinite alternate;
+}
+
+.o_pw_hook_id {
+    padding-right: 4px;
+}
+
+@keyframes o_pw_throw_wiggle {
+    from { transform: rotate(-4deg) translateY(0); }
+    to { transform: rotate(4deg) translateY(2px); }
+}
+
+/* Corner bin allocation badge on every plate / pipe */
+.o_pw_bin_badge {
+    position: absolute;
+    top: -8px;
+    right: -6px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 6px;
+    border: 2px solid #fff;
+    background: var(--pw-bin, #334155);
+    color: var(--pw-bin-text, #fff);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+    pointer-events: none;
+}
+
+.o_pw_bin_badge--temp {
+    background: #64748b;
+    color: #fff;
+}
+
+.o_pw_bin_badge--hook {
+    top: -10px;
+    right: -8px;
+}
+
+.o_pw_bin_badge--task {
+    position: static;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.o_pw_bin_card.is-landing {
+    animation: o_pw_bin_pulse 0.7s ease-in-out infinite;
+}
+
+@keyframes o_pw_bin_pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(91, 63, 214, 0.2); }
+    50% { box-shadow: 0 0 0 6px rgba(91, 63, 214, 0.35); }
+}
+
+.is-landed {
+    animation: o_pw_land 0.4s ease-out;
+}
+
+@keyframes o_pw_land {
+    from { transform: translateY(-12px); opacity: 0.4; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.is-on-hook {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.o_pw_panel_label {
+    margin-bottom: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b6b80;
+}
+
+.o_pw_pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 12px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #f8fafc, #e8edf3);
+    border: 1px solid #e8e8f0;
+    min-height: 280px;
+    justify-content: flex-end;
+}
+
+.o_pw_pyramid_row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+}
+
+.o_pw_pipe {
+    --pw-bin: #94a3b8;
+    --pw-bin-text: #1e293b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    background: transparent;
+}
+
+.o_pw_pipe_body,
+.o_pw_pipe--rack {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    min-height: 34px;
+    padding: 6px 14px 6px 18px;
+    border-radius: 999px;
+    color: var(--pw-bin-text, #1e293b);
+    font-weight: 700;
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.12),
+        0 3px 8px rgba(20, 30, 50, 0.12);
+}
+
+.o_pw_pipe--pyramid .o_pw_pipe_body {
+    width: min(180px, 42vw);
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.18), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.18)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 40%, rgba(0, 0, 0, 0.15)),
+        var(--pw-bin, #94a3b8);
+}
+
+.o_pw_pipe--bin .o_pw_pipe_body,
+.o_pw_pipe--bin.o_pw_pipe--rack {
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.16), transparent 16%, transparent 84%, rgba(0, 0, 0, 0.18)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 40%, rgba(0, 0, 0, 0.12)),
+        var(--pw-bin, #94a3b8);
+}
+
+.o_pw_pipe--temp .o_pw_pipe_body,
+.o_pw_pipe--temp.o_pw_pipe--rack {
+    color: #334155;
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent 16%, transparent 84%, rgba(0, 0, 0, 0.14)),
+        linear-gradient(180deg, #f1f5f9, #cbd5e1 45%, #64748b);
+    border: 1px dashed #64748b;
+}
+
+.o_pw_pipe--pyramid .o_pw_pipe_body::before,
+.o_pw_pipe--rack::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 4px;
+    bottom: 4px;
+    width: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff 0 28%, rgba(0, 0, 0, 0.25) 40%, rgba(0, 0, 0, 0.08) 70%);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.o_pw_pipe.is-selected .o_pw_pipe_body,
+.o_pw_pipe.is-selected.o_pw_pipe--rack {
+    outline: 3px solid #5b3fd6;
+    outline-offset: 3px;
+}
+
+.o_pw_pipe_id {
+    font-size: 12px;
+    letter-spacing: 0.02em;
+}
+
+.o_pw_pipe_size {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.o_pw_pipe--rack {
+    position: relative;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.o_pw_pipe--rack .o_pw_bin_badge {
+    top: -6px;
+    right: 4px;
+}
+
+.o_pw_bins_grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.o_pw_bin_card,
+.o_pw_temp_zone {
+    --pw-bin: #94a3b8;
+    padding: 10px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e8e8f0;
+}
+
+.o_pw_bin_card.is-target {
+    border-color: #5b3fd6;
+    box-shadow: 0 0 0 3px rgba(91, 63, 214, 0.18);
+    background: #f5f3ff;
+}
+
+.o_pw_bin_head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.o_pw_bin_swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: var(--pw-bin, #94a3b8);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.o_pw_bin_swatch--temp {
+    background: #cbd5e1;
+    border-style: dashed;
+}
+
+.o_pw_bin_name {
+    font-size: 13px;
+    font-weight: 800;
+    color: #334155;
+}
+
+.o_pw_bin_count {
+    margin-left: auto;
+    font-size: 11px;
+    color: #6b6b80;
+}
+
+.o_pw_bin_rack,
+.o_pw_temp_rack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 110px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #d5dde6;
+    background: linear-gradient(180deg, #eef2f6, #dde4ec);
+    text-align: left;
+    cursor: pointer;
+}
+
+.o_pw_bin_rack:disabled {
+    cursor: default;
+}
+
+.o_pw_temp_zone {
+    margin-top: 12px;
+    border-style: dashed;
+}
+
+.o_pw_temp_rack {
+    border-style: dashed;
+    background: linear-gradient(180deg, #f8fafc, #e2e8f0);
+}
+
+.o_pw_bin_empty,
+.o_pw_empty {
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    color: #6b6b80;
+    padding: 22px 8px;
+}
+
+.o_pw_plate_wait {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 14px;
+    background: #eef2f6;
+    border: 1px solid #e8e8f0;
+    min-height: 200px;
+}
+
+.o_pw_plate {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: var(--pw-bin, #94a3b8);
+    color: var(--pw-bin-text, #1e293b);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.o_pw_plate_main {
+    position: relative;
+    z-index: 1;
+}
+
+.o_pw_plate--temp {
+    background: #cbd5e1;
+    color: #334155;
+    border-style: dashed;
+}
+
+.o_pw_plate.is-selected {
+    outline: 3px solid #5b3fd6;
+    outline-offset: 2px;
+}
+
+.o_pw_plate .o_pw_bin_badge {
+    top: -7px;
+    right: -4px;
+}
+
+.o_pw_actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.o_pw_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.o_pw_btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.o_pw_btn--outline {
+    background: #ffffff;
+    border-color: #e8e8f0;
+    color: #15151f;
+}
+
+.o_pw_btn--soft {
+    background: #eef2f6;
+    color: #334155;
+}
+
+.o_pw_btn--primary {
+    background: #5b3fd6;
+    color: #fff;
+}
+
+.o_pw_btn--primary:hover:not(:disabled) {
+    background: #4a2fc2;
+}
+
+.o_pw_btn_badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.22);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.o_pw_side_card {
+    padding: 14px 16px;
+}
+
+.o_pw_side_card .o_pw_card_title {
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.o_pw_task_list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 680px;
+    overflow: auto;
+}
+
+.o_pw_task {
+    --pw-bin: #94a3b8;
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #e8e8f0;
+    background: #ffffff;
+    cursor: pointer;
+    text-align: left;
+}
+
+.o_pw_task.is-selected {
+    border-color: #5b3fd6;
+    background: #efeafe;
+}
+
+.o_pw_task_num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #eef2f6;
+    color: #6b6b80;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.o_pw_task--placed .o_pw_task_num {
+    background: #16a34a;
+    color: #fff;
+}
+
+.o_pw_task_title {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.o_pw_task_meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.o_pw_task_bin {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.o_pw_task_swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--pw-bin, #94a3b8);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.o_pw_task--temporary .o_pw_task_swatch {
+    background: #cbd5e1;
+    border-style: dashed;
+}
+
+.o_pw_task_status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+}
+
+.o_pw_task_status--pending {
+    background: #fff6e5;
+    color: #d97706;
+}
+
+.o_pw_task_status--placed {
+    background: #e8f8ee;
+    color: #16a34a;
+}
+
+.o_pw_task_status--temporary {
+    background: #eef2f6;
+    color: #334155;
+}
+
+@media (max-width: 1100px) {
+    .o_pw_body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .o_pw_yard--pipe {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .o_pw_kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .o_pw_bins_grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .o_pw_pipe--pyramid .o_pw_pipe_body {
+        width: min(150px, 70vw);
+    }
+}
+
+/* ------------------------------------------------------------------
+   Pipe Put Away — round pipe end (cross-section) structure
+   Scoped to .o_pw_page--pipe so Plate Put Away stays rectangular.
+   ------------------------------------------------------------------ */
+
+.o_pw_page--pipe .o_pw_pyramid {
+    gap: 0;
+    padding: 22px 16px 18px;
+    min-height: 320px;
+}
+
+/* Locked pyramid: each slot has a fixed pixel position — no flex reflow */
+.o_pw_page--pipe .o_pw_pyramid--fixed {
+    position: relative;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.o_pw_page--pipe .o_pw_pipe_slot--fixed {
+    position: absolute;
+    width: 78px;
+    height: 96px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 1;
+}
+
+.o_pw_page--pipe .o_pw_empty--overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.o_pw_page--pipe .o_pw_pipe {
+    position: relative;
+    flex-direction: column;
+    width: 78px;
+    height: 96px;
+    min-width: 78px;
+}
+
+.o_pw_page--pipe .o_pw_pipe_body,
+.o_pw_page--pipe .o_pw_pipe--rack .o_pw_pipe_body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    min-height: 70px;
+    flex: 0 0 70px;
+    padding: 0;
+    border-radius: 50% !important;
+    border: 3px solid rgba(0, 0, 0, 0.2) !important;
+    color: var(--pw-bin-text, #1e293b) !important;
+    font-weight: 800;
+    background:
+        radial-gradient(circle at 50% 50%,
+            #f1f5f9 0 26%,
+            rgba(0, 0, 0, 0.22) 28% 32%,
+            var(--pw-bin, #94a3b8) 34% 76%,
+            rgba(255, 255, 255, 0.45) 80% 88%,
+            var(--pw-bin, #94a3b8) 90% 100%) !important;
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.35),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.18),
+        0 4px 10px rgba(20, 30, 50, 0.18) !important;
+}
+
+/* Hide the old horizontal pipe-end cap on round pipes */
+.o_pw_page--pipe .o_pw_pipe_body::before,
+.o_pw_page--pipe .o_pw_pipe--rack::before {
+    content: none !important;
+    display: none !important;
+}
+
+.o_pw_page--pipe .o_pw_pipe--temp .o_pw_pipe_body {
+    border-style: dashed !important;
+    border-color: #64748b !important;
+    background:
+        radial-gradient(circle at 50% 50%,
+            #f8fafc 0 26%,
+            rgba(0, 0, 0, 0.18) 28% 32%,
+            #cbd5e1 34% 76%,
+            #e2e8f0 90% 100%) !important;
+    color: #334155 !important;
+}
+
+.o_pw_page--pipe .o_pw_pipe_id {
+    position: relative;
+    z-index: 2;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.o_pw_page--pipe .o_pw_pipe_size {
+    display: block;
+    margin-top: 4px;
+    max-width: 78px;
+    padding: 1px 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.o_pw_page--pipe .o_pw_pipe.is-selected .o_pw_pipe_body {
+    outline: 3px solid #5b3fd6;
+    outline-offset: 3px;
+}
+
+.o_pw_page--pipe .o_pw_pipe--pyramid .o_pw_bin_badge {
+    top: -4px;
+    right: 0;
+}
+
+/* Round mini pipes inside bin racks / temp zone */
+.o_pw_page--pipe .o_pw_bin_rack,
+.o_pw_page--pipe .o_pw_temp_rack {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    min-height: 120px;
+}
+
+.o_pw_page--pipe .o_pw_pipe--rack {
+    width: 64px;
+    height: 82px;
+    min-width: 64px;
+    margin-bottom: 0;
+    flex-direction: column;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0;
+}
+
+.o_pw_page--pipe .o_pw_pipe--rack .o_pw_pipe_body {
+    width: 56px;
+    height: 56px;
+    min-height: 56px;
+    flex-basis: 56px;
+}
+
+.o_pw_page--pipe .o_pw_pipe--rack .o_pw_pipe_id {
+    font-size: 11px;
+}
+
+.o_pw_page--pipe .o_pw_pipe--rack .o_pw_pipe_size {
+    max-width: 64px;
+    font-size: 9px;
+}
+
+.o_pw_page--pipe .o_pw_pipe--rack .o_pw_bin_badge {
+    top: -4px;
+    right: -2px;
+}
+
+/* Round load on crane hook */
+.o_pw_page--pipe .o_pw_hook_load--round {
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+    padding: 0;
+    border-radius: 50%;
+    border: 3px solid rgba(0, 0, 0, 0.18);
+    background:
+        radial-gradient(circle at 50% 50%,
+            #f1f5f9 0 26%,
+            rgba(0, 0, 0, 0.2) 28% 32%,
+            var(--pw-bin, #94a3b8) 34% 78%,
+            var(--pw-bin, #94a3b8) 90% 100%) !important;
+}
+
+.o_pw_page--pipe .o_pw_hook_load--round .o_pw_hook_id {
+    padding: 0;
+    font-size: 11px;
+}
+
+@media (max-width: 640px) {
+    .o_pw_page--pipe .o_pw_pipe--pyramid .o_pw_pipe_body {
+        width: 62px;
+        height: 62px;
+        min-height: 62px;
+        flex-basis: 62px;
+    }
+
+    .o_pw_page--pipe .o_pw_pipe {
+        width: 70px;
+        height: 88px;
+        min-width: 70px;
+    }
+}
+
+/* cache-bust 2026-10-17-pipe-pyramid-absolute-slots */
