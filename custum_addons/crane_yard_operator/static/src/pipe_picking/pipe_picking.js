@@ -4,6 +4,12 @@ import { Component, onWillUnmount, reactive, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { CraneYardNav } from "@crane_yard_operator/crane_nav/crane_nav";
+import {
+    enrichBin,
+    pipeYardState,
+    syncTempBinQuantity,
+    TEMP_PIPE_BIN_ID,
+} from "@crane_yard_operator/pipe_picking/pipe_yard_data";
 
 const TRAVEL_MS = 700;
 const HOOK_MS = 350;
@@ -62,7 +68,7 @@ const DROP_STEPS = [
 ];
 
 const RESTORE_STEPS = [
-    { id: 1, label: "Temp Stack" },
+    { id: 1, label: "Temp Pipe Bin" },
     { id: 2, label: "Return to Pyramid" },
     { id: 3, label: "Completed" },
 ];
@@ -131,11 +137,21 @@ export class PipePicking extends Component {
 
     setup() {
         this.state = useState(pyramid);
+        this.yard = useState(pipeYardState);
         this.actionService = useService("action");
         this.alive = true;
+        syncTempBinQuantity(this.state.rack.length);
         onWillUnmount(() => {
             this.alive = false;
         });
+    }
+
+    get tempBinId() {
+        return this.yard.tempBinId || TEMP_PIPE_BIN_ID;
+    }
+
+    get tempBin() {
+        return enrichBin(this.tempBinId);
     }
 
     get mode() {
@@ -389,7 +405,7 @@ export class PipePicking extends Component {
     }
 
     /**
-     * Next temp pipe to return (LIFO from Temporary Stack) into the next bottom-up empty slot.
+     * Next temp pipe to return (LIFO from Temporary Pipe Bin) into the next bottom-up empty slot.
      */
     get nextReturnPipe() {
         const slot = this.nextFillSlot;
@@ -515,7 +531,7 @@ export class PipePicking extends Component {
                 tone: "red",
                 icon: "fa-arrow-up",
                 title: "Unstacking Upper Pipe",
-                text: `Moving ${id} to the Temporary Stack (original position saved).`,
+                text: `Moving ${id} to Temporary Pipe Bin ${this.tempBinId} (original position saved).`,
             };
         }
         if (this.state.busy && task === "restore") {
@@ -550,7 +566,7 @@ export class PipePicking extends Component {
                     tone: "primary",
                     icon: "fa-info-circle",
                     title: "No Temporary Pipes",
-                    text: "Unstack upper pipes to the Temporary Stack first, then return them here after picking.",
+                    text: "Unstack upper pipes to the Temporary Pipe Bin first, then return them here after picking.",
                 };
             }
             if (!this.nextReturnPipe) {
@@ -567,7 +583,7 @@ export class PipePicking extends Component {
                 tone: "primary",
                 icon: "fa-reply",
                 title: "Return Temporary Pipes",
-                text: `${temps} on Temporary Stack. Next fill: bottom-up empty at ${slotLabel}.`,
+                text: `${temps} in Temporary Pipe Bin ${this.tempBinId}. Next fill: bottom-up empty at ${slotLabel}.`,
             };
         }
         if (this.allDropped) {
@@ -576,7 +592,7 @@ export class PipePicking extends Component {
                     tone: "primary",
                     icon: "fa-reply",
                     title: "Return Temporary Pipes",
-                    text: `${this.temporaryRackPipes.length} pipe${this.temporaryRackPipes.length > 1 ? "s remain" : " remains"} on the Temporary Stack. Open Return Temporary Pipes.`,
+                    text: `${this.temporaryRackPipes.length} pipe${this.temporaryRackPipes.length > 1 ? "s remain" : " remains"} in Temporary Pipe Bin ${this.tempBinId}. Open Return Temporary Pipes.`,
                 };
             }
             return {
@@ -662,7 +678,7 @@ export class PipePicking extends Component {
             return { title: "Moving", text: "Travelling", tone: "primary" };
         }
         if (this.isRestoreScreen) {
-            return { title: "Ready", text: "Return from Temporary Stack", tone: "muted" };
+            return { title: "Ready", text: `Return from Temporary Pipe Bin ${this.tempBinId}`, tone: "muted" };
         }
         return { title: "Ready", text: "Waiting for operator", tone: "muted" };
     }
@@ -796,6 +812,7 @@ export class PipePicking extends Component {
     reset() {
         if (!this.state.busy) {
             Object.assign(this.state, demoPyramid());
+            syncTempBinQuantity(0);
         }
     }
 
@@ -917,6 +934,7 @@ export class PipePicking extends Component {
         crane.load = null;
         crane.phase = "idle";
         this.state.landedId = pipe.id;
+        syncTempBinQuantity(this.state.rack.length);
         await this.wait(HOOK_MS);
         crane.target = null;
         crane.task = null;

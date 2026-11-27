@@ -35,6 +35,11 @@
         <field name="tag">crane_yard_operator.return_plates</field>
     </record>
 
+    <record id="action_pipe_yard_top" model="ir.actions.client">
+        <field name="name">Pipe Yard Top View</field>
+        <field name="tag">crane_yard_operator.pipe_yard_top</field>
+    </record>
+
     <record id="action_pipe_unstack" model="ir.actions.client">
         <field name="name">Pipe Picking - Unstack Upper Pipes</field>
         <field name="tag">crane_yard_operator.pipe_unstack</field>
@@ -111,6 +116,12 @@
               name="Pipe Picking &amp; Dropping"
               parent="menu_crane_yard_root"
               sequence="30"/>
+
+    <menuitem id="menu_pipe_yard_top"
+              name="Pipe Yard Top View"
+              parent="menu_pipe_picking"
+              action="action_pipe_yard_top"
+              sequence="5"/>
 
     <menuitem id="menu_pipe_unstack"
               name="Unstack Upper Pipes"

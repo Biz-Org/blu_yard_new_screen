@@ -33,6 +33,7 @@ const NAV_GROUPS = [
         key: "pipe",
         title: "Pipe Picking & Dropping",
         items: [
+            { key: "pipe_yard_top", label: "Pipe Yard Top View", icon: "fa-th", action: "crane_yard_operator.action_pipe_yard_top" },
             { key: "pipe_unstack", label: "Unstack Upper Pipes", icon: "fa-arrow-up", action: "crane_yard_operator.action_pipe_unstack" },
             { key: "pipe_drop", label: "Pick & Drop to Truck", icon: "fa-truck", action: "crane_yard_operator.action_pipe_drop" },
             { key: "pipe_return", label: "Return Temporary Pipes", icon: "fa-reply", action: "crane_yard_operator.action_pipe_return" },

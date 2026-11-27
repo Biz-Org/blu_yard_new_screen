@@ -24,10 +24,10 @@
                             </div>
                             <i class="fa fa-long-arrow-right o_cy_route_arrow"/>
                             <div t-if="isUnstackScreen" class="o_cy_route_chip o_cy_route_chip--final">
-                                <i class="fa fa-arrow-up"/>
+                                <i class="fa fa-inbox"/>
                                 <div>
                                     <div class="o_cy_route_label">Upper Pipes To</div>
-                                    <div class="o_cy_route_value">Temporary Stack</div>
+                                    <div class="o_cy_route_value">Temporary Pipe Bin <t t-esc="tempBinId"/></div>
                                 </div>
                             </div>
                             <div t-elif="isRestoreScreen" class="o_cy_route_chip o_cy_route_chip--final">
@@ -112,7 +112,7 @@
                                         <span class="o_cy_kpi_icon o_cy_kpi_icon--primary"><i class="fa fa-check"/></span>
                                     </div>
                                     <div class="o_cy_kpi_value"><t t-esc="state.rack.length"/> <small>pipes</small></div>
-                                    <div class="o_cy_kpi_sub">In the Temporary Stack</div>
+                                    <div class="o_cy_kpi_sub">In Temporary Pipe Bin <t t-esc="tempBinId"/></div>
                                 </div>
                             </t>
                             <t t-elif="isRestoreScreen">
@@ -122,7 +122,7 @@
                                         <span class="o_cy_kpi_icon o_cy_kpi_icon--primary"><i class="fa fa-reply"/></span>
                                     </div>
                                     <div class="o_cy_kpi_value"><t t-esc="temporaryRackPipes.length"/> <small>pipes</small></div>
-                                    <div class="o_cy_kpi_sub">On Temporary Stack</div>
+                                    <div class="o_cy_kpi_sub">In Temporary Pipe Bin <t t-esc="tempBinId"/></div>
                                 </div>
                                 <div class="o_cy_card o_cy_kpi">
                                     <div class="o_cy_kpi_head">
@@ -237,23 +237,27 @@
                                         <div class="o_cy_ground"/>
                                     </div>
 
-                                    <div t-if="isUnstackScreen or isRestoreScreen" class="o_cy_pipe_dest">
+                                    <div t-if="isUnstackScreen or isRestoreScreen" class="o_cy_pipe_dest o_cy_temp_bin">
                                         <div class="o_cy_column_head">
-                                            <span class="o_cy_role o_cy_role--temporary">Temporary</span>
-                                            <span class="o_cy_column_name">Temporary Stack</span>
-                                            <span class="o_cy_column_count"><t t-esc="state.rack.length"/> pipes</span>
+                                            <span class="o_cy_role o_cy_role--temporary">Temporary Pipe Bin</span>
+                                            <span class="o_cy_column_name" t-esc="tempBinId"/>
+                                            <span class="o_cy_column_count"><t t-esc="tempBin.quantity"/> pipes</span>
                                         </div>
-                                        <div class="o_cy_pipe_rack">
+                                        <div class="o_cy_temp_bin_meta">
+                                            <span t-esc="tempBin.quality || 'Holding unstacked pipes'"/>
+                                            <span>Dropped now: <t t-esc="state.rack.length"/></span>
+                                        </div>
+                                        <div class="o_cy_pipe_rack o_cy_temp_bin_rack">
                                             <div t-foreach="rackPipes" t-as="pipe" t-key="pipe.id"
                                                  t-attf-class="o_cy_pipe o_cy_pipe--mini o_cy_pipe--unstacked {{pipe.id === state.landedId ? 'is-landed' : ''}}"
-                                                 t-att-title="'Temp · home R' + (pipe.homeRow + 1) + '/P' + (pipe.homeCol + 1) + ' · ' + pipe.id">
+                                                 t-att-title="'Temp bin ' + tempBinId + ' · home R' + (pipe.homeRow + 1) + '/P' + (pipe.homeCol + 1) + ' · ' + pipe.id">
                                                 <span class="o_cy_pipe_body">
                                                     <span class="o_cy_pipe_label" t-esc="pipe.label"/>
                                                 </span>
                                                 <span class="o_cy_pipe_so" t-esc="pipe.soNumber"/>
                                             </div>
                                             <div t-if="!state.rack.length" class="o_cy_empty">
-                                                <t t-esc="isRestoreScreen ? 'No temporary pipes' : 'Upper pipes go here'"/>
+                                                <t t-esc="isRestoreScreen ? 'No temporary pipes' : 'Upper pipes drop into this bin'"/>
                                             </div>
                                         </div>
                                         <div class="o_cy_ground"/>
