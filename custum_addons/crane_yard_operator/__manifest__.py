@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Crane Yard Operator',
-    'version': '1.2.1',
+    'version': '1.2.2',
     'summary': 'Crane operator screens for truck verification, put away, plate picking and pipe picking',
     'category': 'Inventory/Inventory',
     'depends': ['web'],

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="crane_yard_operator.PipeYardTopView">
+        <div class="o_action o_cy h-100">
+            <div class="o_cy_layout">
+                <CraneYardNav active="navKey"/>
+                <div class="o_cy_content">
+                    <div class="o_cy_page o_pyt_page">
+
+                        <header class="o_cy_header">
+                            <div>
+                                <div class="o_cy_breadcrumb">RM Yard <span class="mx-1">/</span> <span class="o_cy_breadcrumb_active">Pipe Picking &amp; Dropping</span></div>
+                                <h1 class="o_cy_title">
+                                    <t t-if="isTopView">Pipe Yard Top View</t>
+                                    <t t-else="">Bin Operation View</t>
+                                </h1>
+                                <div class="o_cy_subtitle">
+                                    <t t-if="isTopView">All 14 pipe storage bins. Allocated bin is highlighted for picking.</t>
+                                    <t t-else="">Allocated source bin with four layout-adjacent nearby bins.</t>
+                                </div>
+                            </div>
+                            <div class="o_pyt_alloc_chip">
+                                <div class="o_pyt_alloc_label">Allocated Bin</div>
+                                <div class="o_pyt_alloc_value" t-esc="allocatedId"/>
+                            </div>
+                        </header>
+
+                        <div class="o_pyt_legend">
+                            <span class="o_pyt_legend_title">Status</span>
+                            <span class="o_pyt_legend_item o_pyt_legend_item--occupied"><span class="o_pyt_swatch"/>Occupied</span>
+                            <span class="o_pyt_legend_item o_pyt_legend_item--empty"><span class="o_pyt_swatch"/>Empty</span>
+                            <span class="o_pyt_legend_item o_pyt_legend_item--allocated"><span class="o_pyt_swatch"/>Allocated</span>
+                            <span class="o_pyt_legend_item o_pyt_legend_item--picking"><span class="o_pyt_swatch"/>Picking In Progress</span>
+                        </div>
+
+                        <t t-if="isTopView">
+                            <section class="o_cy_card o_pyt_card">
+                                <div class="o_pyt_card_head">
+                                    <div>
+                                        <h2 class="o_cy_card_title">Pipe Storage Bins</h2>
+                                        <div class="o_cy_card_sub">Click the allocated bin to open Bin Operation View.</div>
+                                    </div>
+                                </div>
+                                <div class="o_pyt_yard">
+                                    <div class="o_pyt_aisle">Crane runway / aisle</div>
+                                    <div t-foreach="rows" t-as="row" t-key="row.key" class="o_pyt_row">
+                                        <div class="o_pyt_row_label" t-esc="row.label"/>
+                                        <div class="o_pyt_bin_row">
+                                            <button t-foreach="row.bins" t-as="bin" t-key="bin.id" type="button"
+                                                    t-attf-class="o_pyt_bin o_pyt_bin--{{bin.statusTone}} {{bin.isAllocated ? 'is-allocated' : ''}} {{bin.isSelected ? 'is-selected' : ''}}"
+                                                    t-on-click="() => this.onBinClick(bin.id)">
+                                                <div class="o_pyt_bin_num" t-esc="bin.number"/>
+                                                <div class="o_pyt_bin_qty"><t t-esc="bin.quantity"/> pipes</div>
+                                                <div class="o_pyt_bin_meta" t-esc="bin.quality || '—'"/>
+                                                <div class="o_pyt_bin_status" t-esc="bin.statusLabel"/>
+                                                <span t-if="bin.isAllocated" class="o_pyt_tag">ALLOCATED</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_cy_actions">
+                                    <button type="button" class="o_cy_btn o_cy_btn--outline" t-on-click="reset">
+                                        <i class="fa fa-refresh"/> Reset
+                                    </button>
+                                    <button type="button" class="o_cy_btn o_cy_btn--primary" t-on-click="openAllocatedOps">
+                                        Open Allocated Bin <i class="fa fa-long-arrow-right"/>
+                                    </button>
+                                </div>
+                            </section>
+                        </t>
+
+                        <t t-else="">
+                            <section class="o_cy_card o_pyt_card">
+                                <div class="o_pyt_card_head">
+                                    <div>
+                                        <h2 class="o_cy_card_title">Allocated Bin + Nearby Bins</h2>
+                                        <div class="o_cy_card_sub">Five bins from the yard layout. Continue to Unstack Upper Pipes.</div>
+                                    </div>
+                                    <button type="button" class="o_cy_btn o_cy_btn--soft" t-on-click="goTop">
+                                        <i class="fa fa-th"/> Top View
+                                    </button>
+                                </div>
+
+                                <div class="o_pyt_cluster">
+                                    <div t-foreach="cluster.all" t-as="bin" t-key="bin.id"
+                                         t-attf-class="o_pyt_cluster_bin o_pyt_bin--{{bin.statusTone}} {{bin.isAllocated ? 'is-allocated' : ''}} {{bin.isTemp ? 'is-temp' : ''}}">
+                                        <div class="o_pyt_bin_num" t-esc="bin.number"/>
+                                        <div class="o_pyt_cluster_role">
+                                            <t t-if="bin.isAllocated">Allocated Source</t>
+                                            <t t-elif="bin.isTemp">Temp Candidate</t>
+                                            <t t-else="">Nearby</t>
+                                        </div>
+                                        <div class="o_pyt_bin_qty"><t t-esc="bin.quantity"/> / <t t-esc="bin.capacity"/></div>
+                                        <div class="o_pyt_bin_meta">Available: <t t-esc="bin.available"/></div>
+                                        <div class="o_pyt_bin_meta" t-esc="bin.quality || 'Empty'"/>
+                                        <div class="o_pyt_bin_status" t-esc="bin.statusLabel"/>
+                                    </div>
+                                </div>
+
+                                <div class="o_cy_actions">
+                                    <button type="button" class="o_cy_btn o_cy_btn--soft" t-on-click="goTop">
+                                        <i class="fa fa-long-arrow-left"/> Back to Top View
+                                    </button>
+                                    <button type="button" class="o_cy_btn o_cy_btn--primary" t-on-click="openUnstack">
+                                        Next: Unstack Upper Pipes <i class="fa fa-long-arrow-right"/>
+                                    </button>
+                                </div>
+                            </section>
+                        </t>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -736,4 +736,37 @@
     }
 }
 
-/* cache-bust 2026-10-17-return-fill-bottom-empties */
+/* Temporary Pipe Bin — same right-side destination, bin-styled rack */
+.o_cy_temp_bin .o_cy_column_head {
+    align-items: flex-start;
+}
+
+.o_cy_temp_bin_meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px 10px;
+    margin: 0 0 8px;
+    padding: 0 2px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.o_cy_temp_bin_rack {
+    min-height: 200px;
+    border: 1px solid #c4b5fd;
+    border-radius: 10px 10px 0 0;
+    background:
+        linear-gradient(180deg, rgba(245, 243, 255, 0.9), rgba(241, 243, 246, 0.95)),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 18px,
+            rgba(91, 63, 214, 0.04) 18px,
+            rgba(91, 63, 214, 0.04) 19px
+        );
+    box-shadow: inset 0 0 0 1px rgba(91, 63, 214, 0.08);
+}
+
+/* cache-bust 2026-11-27-pipe-yard-top-temp-bin */
